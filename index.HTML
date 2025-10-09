@@ -105,229 +105,285 @@
     </div>
 
     <script>
-        // *** โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcaCsZnPS3vDIWFLQhaT4di0frhkgXyn8PhwHhJPtLymHOczC_t_hT2xrpQD2VznA/exec"; 
+    // *** โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcaCsZnPS3vDIWFLQhaT4di0frhkgXyn8PhwHhJPtLymHOczC_t_hT2xrpQD2VznA/exec";
 
-        // ข้อมูลอุปกรณ์คงที่ (ชื่อและรายละเอียดเท่านั้น, สถานะจะถูกคำนวณแบบ Real-time)
-        const equipmentInventory = [
-            { name: "HP Pavilion Gaming", details: "（รับ 1/9/2020 RMC 16994 No.7440-013-0002/0033）" },
-            { name: "Asus X512DA-EJ1021T (15.6) สีส้ม", details: "（รับ 15/5/2020 RMC 16760 NO.7440-013-0002/0030）" },
-            { name: "Asus N/b asus D413A สีดำ", details: "（รับ 15/5/2020 RMC 14993 NO.7440-013-0002/0026）" },
-            { name: "Acer สีขาว", details: "（รับ 23/3/2018 RMC 14949 NO.7440-013-0002/0024）" },
-            { name: "MSI modern 14 b5m สีดำ เครื่องเล็ก", details: "（รับ 25/08/2021 RMC 17609 NO.7440-013-0002/0040）" },
-            { name: "MSI GF63 Thin 10SCXR-1634TH สีดำ (15.6) - เครื่อง A", details: "（รับ 01/10/2021 RMC 17649 NO.7440-013-0002/0041）" },
-            { name: "Lenovo ThinkPad AMD RYZEN 5 4000 SERIES สีดำ", details: "（ไม่มีเลขครุภัณฑ์）" },
-            { name: "MSI GF63 Thin 10SCXR-1634TH สีดำ (15.6) - เครื่อง B", details: "（รับ 01/10/2021 RMC 17649 NO.7440-013-0002/0041）" },
-        ];
+    // ข้อมูลอุปกรณ์คงที่ (ชื่อและรายละเอียดเท่านั้น, สถานะจะถูกคำนวณแบบ Real-time)
+    const equipmentInventory = [
+        { name: "HP Pavilion Gaming", details: "（รับ 1/9/2020 RMC 16994 No.7440-013-0002/0033）" },
+        { name: "Asus X512DA-EJ1021T (15.6) สีส้ม", details: "（รับ 15/5/2020 RMC 16760 NO.7440-013-0002/0030）" },
+        { name: "Asus N/b asus D413A สีดำ", details: "（รับ 15/5/2020 RMC 14993 NO.7440-013-0002/0026）" },
+        { name: "MSI modern 14 b5m สีดำ เครื่องเล็ก", details: "（รับ 25/08/2021 RMC 17609 NO.7440-013-0002/0040）" },
+        { name: "MSI GF63 Thin 10SCXR-1634TH สีดำ (15.6) ", details: "（รับ 01/10/2021 RMC 17649 NO.7440-013-0002/0041）" },
+        { name: "Lenovo ThinkPad AMD RYZEN 5 4000 SERIES สีดำ", details: "（ไม่มีเลขครุภัณฑ์）" },
+        
+    ];
 
-        let currentEquipmentStatus = {}; // เก็บสถานะล่าสุดของอุปกรณ์: { 'Equipment Name': { action, borrowerName, dueDate } }
+    let currentEquipmentStatus = {}; // เก็บสถานะล่าสุดของอุปกรณ์: { 'Equipment Name': { action, borrowerName, dueDate } }
 
-        const form = document.getElementById('loanForm');
-        const equipmentSelect = document.getElementById('equipment');
-        const equipmentListDiv = document.getElementById('equipmentList');
-        const actionSelect = document.getElementById('action');
-        const dueDateGroup = document.getElementById('dueDateGroup');
-        const statusMessage = document.getElementById('statusMessage');
-        const loader = document.getElementById('loader');
-        const loaderText = document.getElementById('loaderText');
-        const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('loanForm');
+    const equipmentSelect = document.getElementById('equipment');
+    const equipmentListDiv = document.getElementById('equipmentList');
+    const actionSelect = document.getElementById('action');
+    const dueDateGroup = document.getElementById('dueDateGroup');
+    const statusMessage = document.getElementById('statusMessage');
+    const loader = document.getElementById('loader');
+    const loaderText = document.getElementById('loaderText');
+    const submitBtn = document.getElementById('submitBtn');
 
-        // Helper function สำหรับแสดง Loader
-        function toggleLoader(show, text = 'กำลังบันทึกข้อมูล...') {
-            loaderText.textContent = text;
-            if (show) {
-                loader.classList.remove('hidden');
-                submitBtn.disabled = true;
+    // Helper function สำหรับแสดง Loader
+    function toggleLoader(show, text = 'กำลังบันทึกข้อมูล...') {
+        loaderText.textContent = text;
+        if (show) {
+            loader.classList.remove('hidden');
+            submitBtn.disabled = true;
+        } else {
+            loader.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
+    }
+
+    // Helper function สำหรับแสดงสถานะข้อความ
+    function showMessage(message, isSuccess = true) {
+        statusMessage.textContent = message;
+        statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+        statusMessage.classList.add(isSuccess ? 'bg-green-100' : 'bg-red-100', isSuccess ? 'text-green-700' : 'text-red-700');
+        setTimeout(() => {
+            statusMessage.classList.add('hidden');
+        }, 5000);
+    }
+
+    // 1. สร้างและอัปเดต Dropdown List อุปกรณ์ตามสถานะและ Action ที่เลือก
+    function updateEquipmentSelectOptions() {
+        const selectedAction = actionSelect.value;
+        const isBorrowAction = selectedAction === 'ยืม';
+        
+        // ล้างรายการเดิม
+        equipmentSelect.innerHTML = '<option value="" disabled selected>--- เลือกอุปกรณ์ ---</option>';
+
+        let optionsAdded = 0;
+
+        equipmentInventory.forEach(item => {
+            const equipmentName = item.name;
+            const statusInfo = currentEquipmentStatus[equipmentName];
+            // ตรวจสอบสถานะ: เป็น Available หากไม่มี Log หรือ Log ล่าสุดคือ 'คืน'
+            const isAvailable = !statusInfo || statusInfo.action === 'คืน';
+
+            let shouldAdd = false;
+            let displayStatus = item.details;
+
+            if (isBorrowAction) {
+                // สำหรับ 'ยืม': แสดงเฉพาะอุปกรณ์ที่พร้อมใช้งาน
+                if (isAvailable) {
+                    shouldAdd = true;
+                    displayStatus = `${item.details} (พร้อมให้ยืม)`;
+                }
             } else {
-                loader.classList.add('hidden');
-                submitBtn.disabled = false;
+                // สำหรับ 'คืน': แสดงเฉพาะอุปกรณ์ที่ถูกยืมอยู่
+                if (!isAvailable) {
+                    shouldAdd = true;
+                    const borrower = statusInfo.borrowerName || 'ไม่ระบุ';
+                    displayStatus = `${item.details} (กำลังยืมโดย: ${borrower})`;
+                }
             }
-        }
 
-        // Helper function สำหรับแสดงสถานะข้อความ
-        function showMessage(message, isSuccess = true) {
-            statusMessage.textContent = message;
-            statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
-            statusMessage.classList.add(isSuccess ? 'bg-green-100' : 'bg-red-100', isSuccess ? 'text-green-700' : 'text-red-700');
-            setTimeout(() => {
-                statusMessage.classList.add('hidden');
-            }, 5000);
-        }
-
-        // 1. สร้าง Dropdown List อุปกรณ์
-        function populateEquipmentSelect() {
-            // ล้างรายการเดิม
-            equipmentSelect.innerHTML = '<option value="" disabled selected>--- เลือกอุปกรณ์ ---</option>'; 
-            equipmentInventory.forEach(item => {
+            if (shouldAdd) {
                 const option = document.createElement('option');
-                option.value = item.name;
-                option.textContent = `${item.name} ${item.details}`;
+                option.value = equipmentName;
+                option.textContent = `${equipmentName} ${displayStatus}`;
                 equipmentSelect.appendChild(option);
-            });
-        }
-
-        // 2. คำนวณสถานะปัจจุบันจาก Log
-        function calculateCurrentStatus(logs) {
-            const statusMap = {}; // { equipmentName: { action: 'ยืม'|'คืน', borrowerName: '...', dueDate: '...' } }
-
-            // 1. เรียง Log ตาม Timestamp (Apps Script ดึงข้อมูลออกมาเรียงตามเวลาอยู่แล้ว, แต่เรียงซ้ำเพื่อความมั่นใจ)
-            // Note: Since Apps Script returns logs row by row, the order should be chronological.
-            // We iterate through them, the *last* action for an equipment item is its current status.
-            
-            // 2. ประมวลผล Log เพื่อหาสถานะล่าสุด
-            logs.forEach(log => {
-                // อัปเดตสถานะของอุปกรณ์นั้นๆ ด้วย Log ล่าสุดที่พบ
-                statusMap[log.equipment] = {
-                    action: log.action,
-                    borrowerName: log.borrowerName,
-                    dueDate: log.dueDate
-                };
-            });
-
-            currentEquipmentStatus = statusMap;
-        }
-
-        // 3. แสดงรายการอุปกรณ์พร้อมสถานะ Real-time
-        function renderEquipmentList() {
-            equipmentListDiv.innerHTML = ''; // Clear previous list
-
-            equipmentInventory.forEach(item => {
-                const statusInfo = currentEquipmentStatus[item.name];
-                let statusText = '';
-                let statusColor = '';
-
-                if (statusInfo && statusInfo.action === 'ยืม') {
-                    // ถูกยืม
-                    const borrower = statusInfo.borrowerName || 'ไม่ระบุชื่อ';
-                    const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
-                    statusText = `⛔ ถูกยืม โดย: ${borrower} (กำหนดคืน: ${dueDate})`;
-                    statusColor = 'bg-red-100 text-red-700 border-red-300';
-                } else {
-                    // พร้อมใช้งาน (Log ล่าสุดคือ 'คืน' หรือไม่เคยมี Log เลย)
-                    statusText = '✅ พร้อมใช้งาน';
-                    statusColor = 'bg-green-100 text-green-700 border-green-300';
-                }
-
-                const itemDiv = document.createElement('div');
-                itemDiv.className = `p-3 rounded-lg border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out ${statusColor}`;
-                itemDiv.innerHTML = `
-                    <span class="font-medium text-gray-800">${item.name}</span>
-                    <span class="text-xs text-gray-500 mt-1 md:mt-0 md:ml-4 flex-grow">${item.details}</span>
-                    <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
-                `;
-                equipmentListDiv.appendChild(itemDiv);
-            });
-        }
-
-        // 4. ดึง Log ทั้งหมดจาก Apps Script (GET request)
-        async function fetchRealtimeStatus() {
-            toggleLoader(true, 'กำลังดึงสถานะอุปกรณ์...');
-            equipmentListDiv.innerHTML = '<p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>';
-
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'GET',
-                    redirect: 'follow', // จำเป็นสำหรับการใช้งาน Apps Script URL
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    // คำนวณสถานะจาก Log ทั้งหมด
-                    calculateCurrentStatus(result.logs);
-                    renderEquipmentList();
-                } else {
-                    showMessage(`❌ เกิดข้อผิดพลาดในการดึงสถานะ: ${result.message || 'ไม่ทราบข้อผิดพลาด'}`, false);
-                    equipmentListDiv.innerHTML = `<p class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดสถานะ: ${result.message || 'กรุณาตรวจสอบ Console'}</p>`;
-                }
-            } catch (error) {
-                console.error("Fetch GET Error:", error);
-                showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Apps Script: ${error.message}`, false);
-                equipmentListDiv.innerHTML = `<p class="text-center text-red-500">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
-            } finally {
-                toggleLoader(false);
+                optionsAdded++;
             }
-        }
+        });
 
-        // 5. จัดการการเปลี่ยนแปลง Action (ยืม/คืน)
-        actionSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'ยืม') {
-                dueDateGroup.classList.remove('hidden');
-                document.getElementById('dueDate').setAttribute('required', 'required');
+        // เพิ่มตัวเลือกแจ้งเตือนหากไม่มีอุปกรณ์ให้เลือกตาม Action
+        if (optionsAdded === 0) {
+            const msg = document.createElement('option');
+            msg.value = "";
+            msg.disabled = true;
+            msg.textContent = isBorrowAction ? '*** ไม่มีอุปกรณ์พร้อมให้ยืมในขณะนี้ ***' : '*** ไม่มีอุปกรณ์ที่ถูกยืมอยู่ ***';
+            equipmentSelect.appendChild(msg);
+        }
+    }
+
+
+    // 2. คำนวณสถานะปัจจุบันจาก Log
+    function calculateCurrentStatus(logs) {
+        const statusMap = {}; // { equipmentName: { action: 'ยืม'|'คืน', borrowerName: '...', dueDate: '...' } }
+        
+        // ประมวลผล Log เพื่อหาสถานะล่าสุด (Log ที่ใหม่ที่สุดจะชนะ)
+        logs.forEach(log => {
+            statusMap[log.equipment] = {
+                action: log.action,
+                borrowerName: log.borrowerName,
+                dueDate: log.dueDate
+            };
+        });
+
+        currentEquipmentStatus = statusMap;
+    }
+
+    // 3. แสดงรายการอุปกรณ์พร้อมสถานะ Real-time
+    function renderEquipmentList() {
+        equipmentListDiv.innerHTML = ''; // Clear previous list
+
+        equipmentInventory.forEach(item => {
+            const statusInfo = currentEquipmentStatus[item.name];
+            let statusText = '';
+            let statusColor = '';
+
+            if (statusInfo && statusInfo.action === 'ยืม') {
+                // ถูกยืม
+                const borrower = statusInfo.borrowerName || 'ไม่ระบุชื่อ';
+                const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
+                statusText = `⛔ ถูกยืม โดย: ${borrower} (กำหนดคืน: ${dueDate})`;
+                statusColor = 'bg-red-100 text-red-700 border-red-300';
             } else {
-                dueDateGroup.classList.add('hidden');
-                document.getElementById('dueDate').removeAttribute('required');
+                // พร้อมใช้งาน (Log ล่าสุดคือ 'คืน' หรือไม่เคยมี Log เลย)
+                statusText = '✅ พร้อมใช้งาน';
+                statusColor = 'bg-green-100 text-green-700 border-green-300';
             }
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `p-3 rounded-lg border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out ${statusColor}`;
+            itemDiv.innerHTML = `
+                <span class="font-medium text-gray-800">${item.name}</span>
+                <span class="text-xs text-gray-500 mt-1 md:mt-0 md:ml-4 flex-grow">${item.details}</span>
+                <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
+            `;
+            equipmentListDiv.appendChild(itemDiv);
         });
+    }
 
-        // 6. จัดการการ Submit Form (POST request)
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // 4. ดึง Log ทั้งหมดจาก Apps Script (GET request)
+    async function fetchRealtimeStatus() {
+        toggleLoader(true, 'กำลังดึงสถานะอุปกรณ์...');
+        equipmentListDiv.innerHTML = '<p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>';
 
-            // ใช้ FormData ในการเตรียมข้อมูล
-            const action = actionSelect.value;
-            const equipment = equipmentSelect.value;
-            const borrowerName = document.getElementById('borrowerName').value;
-            const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
+        try {
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'GET',
+                redirect: 'follow', 
+            });
 
-            // ตรวจสอบความถูกต้องของข้อมูล (ป้องกันการ Submit ค่าว่าง)
-            if (equipmentSelect.value === "") {
-                 showMessage("❗ กรุณาเลือกรายการอุปกรณ์", false);
-                 return;
-            }
-            if (borrowerName.trim() === "") {
-                 showMessage("❗ กรุณาระบุชื่อผู้ยืม / ผู้ทำการคืน", false);
-                 return;
-            }
-            if (action === 'ยืม' && dueDate.trim() === "") {
-                 showMessage("❗ กรุณาระบุวันกำหนดคืน", false);
-                 return;
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // แสดง Loader
-            toggleLoader(true, 'กำลังบันทึกข้อมูล...');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                // คำนวณสถานะจาก Log ทั้งหมด
+                calculateCurrentStatus(result.logs);
+                renderEquipmentList();
+                // อัปเดต Dropdown ด้วยสถานะล่าสุด
+                updateEquipmentSelectOptions(); 
+            } else {
+                showMessage(`❌ เกิดข้อผิดพลาดในการดึงสถานะ: ${result.message || 'ไม่ทราบข้อผิดพลาด'}`, false);
+                equipmentListDiv.innerHTML = `<p class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดสถานะ: ${result.message || 'กรุณาตรวจสอบ Console'}</p>`;
+            }
+        } catch (error) {
+            console.error("Fetch GET Error:", error);
+            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Apps Script: ${error.message}`, false);
+            equipmentListDiv.innerHTML = `<p class="text-center text-red-500">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
+        } finally {
+            toggleLoader(false);
+        }
+    }
 
-            try {
-                const formData = new FormData(form);
-                // Apps Script URL ต้องเป็นรูปแบบ /exec เท่านั้นสำหรับการ Post Form Data
-                const response = await fetch(APPS_SCRIPT_URL, { 
-                    method: 'POST',
-                    body: formData,
-                });
+    // 5. จัดการการเปลี่ยนแปลง Action (ยืม/คืน)
+    actionSelect.addEventListener('change', (e) => {
+        // จัดการการแสดงช่องกำหนดการคืน
+        if (e.target.value === 'ยืม') {
+            dueDateGroup.classList.remove('hidden');
+            document.getElementById('dueDate').setAttribute('required', 'required');
+        } else {
+            dueDateGroup.classList.add('hidden');
+            document.getElementById('dueDate').removeAttribute('required');
+        }
+        
+        // อัปเดตรายการอุปกรณ์ใน Dropdown ตาม Action ที่เลือก
+        updateEquipmentSelectOptions();
+    });
 
-                // Apps Script จะตอบกลับเป็น JSON
-                const result = await response.json();
+    // 6. จัดการการ Submit Form (POST request)
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // 1. ดึงข้อมูล
+        const action = actionSelect.value;
+        const equipment = equipmentSelect.value;
+        const borrowerName = document.getElementById('borrowerName').value;
+        const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
+
+        // 2. ตรวจสอบข้อมูลพื้นฐาน
+        if (equipmentSelect.value === "" || equipmentSelect.value.startsWith('***')) {
+             showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
+             return;
+        }
+        if (borrowerName.trim() === "") {
+             showMessage("❗ กรุณาระบุชื่อผู้ยืม / ผู้ทำการคืน", false);
+             return;
+        }
+        if (action === 'ยืม' && dueDate.trim() === "") {
+             showMessage("❗ กรุณาระบุวันกำหนดคืน", false);
+             return;
+        }
+        
+        // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด
+        const currentStatus = currentEquipmentStatus[equipment];
+        const isCurrentlyBorrowed = currentStatus && currentStatus.action === 'ยืม';
+
+        if (action === 'ยืม' && isCurrentlyBorrowed) {
+            // ไม่ให้ยืมซ้ำ
+            showMessage(`❌ อุปกรณ์ ${equipment} ถูกยืมอยู่โดย ${currentStatus.borrowerName} ไม่สามารถยืมซ้ำได้!`, false);
+            return;
+        }
+
+        if (action === 'คืน' && !isCurrentlyBorrowed) {
+            // ไม่ให้คืนอุปกรณ์ที่ไม่ได้ถูกยืมอยู่
+            showMessage(`❌ อุปกรณ์ ${equipment} ไม่ได้อยู่ในสถานะถูกยืม ไม่สามารถทำรายการคืนได้!`, false);
+            return;
+        }
+
+
+        // 4. ดำเนินการ POST
+        toggleLoader(true, 'กำลังบันทึกข้อมูล...');
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage(`✅ บันทึกการ${action}สำเร็จ! ข้อมูลถูกบันทึกใน Google Sheet แล้ว`, true);
+                form.reset(); 
+                actionSelect.dispatchEvent(new Event('change')); // รีเซ็ตการแสดง Due Date และ Dropdown
                 
-                if (result.status === 'success') {
-                    showMessage(`✅ บันทึกการ${action}สำเร็จ! ข้อมูลถูกบันทึกใน Google Sheet แล้ว`, true);
-                    form.reset(); // ล้างฟอร์ม
-                    actionSelect.dispatchEvent(new Event('change')); // รีเซ็ตการแสดง Due Date
-                    
-                    // ดึงสถานะใหม่ทันทีหลังจากบันทึกสำเร็จ
-                    await fetchRealtimeStatus(); 
+                // ดึงสถานะใหม่ทันทีหลังจากบันทึกสำเร็จ
+                await fetchRealtimeStatus(); 
 
-                } else {
-                    showMessage(`❌ เกิดข้อผิดพลาดในการบันทึก: ${result.message || 'ไม่สามารถติดต่อ Google Sheet ได้'}`, false);
-                }
-
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, false);
-            } finally {
-                toggleLoader(false);
+            } else {
+                showMessage(`❌ เกิดข้อผิดพลาดในการบันทึก: ${result.message || 'ไม่สามารถติดต่อ Google Sheet ได้'}`, false);
             }
-        });
 
-        // Initial setup
-        window.onload = () => {
-            populateEquipmentSelect();
-            fetchRealtimeStatus(); // ดึงสถานะจริงเมื่อโหลดหน้า
-            actionSelect.dispatchEvent(new Event('change')); // Set initial state for Due Date
-        };
-    </script>
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, false);
+        } finally {
+            toggleLoader(false);
+        }
+    });
+
+    // Initial setup
+    window.onload = () => {
+        fetchRealtimeStatus(); // ดึงสถานะจริงเมื่อโหลดหน้า
+        actionSelect.dispatchEvent(new Event('change')); // Set initial state for Due Date & Dropdown
+    };
+</script>
 </body>
 </html>
