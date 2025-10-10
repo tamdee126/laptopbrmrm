@@ -13,6 +13,7 @@
             background-color: #f8f9fa;
         }
         .container-card {
+            /* Shadow and rounded corners for a clean look */
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         .loader {
@@ -63,9 +64,31 @@
 
             <!-- Borrower Name -->
             <div>
-                <label for="borrowerName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ยืม / ผู้ทำการคืน /***ระบุเหตุผลขอยืมใช้งานหลังชื่อ</label>
-                <input type="text" id="borrowerName" name="borrowerName" required placeholder="ระบุชื่อ-นามสกุล หรือแผนก"
+                <label for="borrowerName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ยืม / ผู้ทำการคืน </label>
+                <input type="text" id="borrowerName" name="borrowerName" required placeholder="ระบุชื่อ-นามสกุล "
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <!-- Added Field: Department/Section -->
+            <div>
+                <label for="department" class="block text-sm font-medium text-gray-700 mb-1">หน่วยงาน/แผนก</label>
+                <input type="text" id="department" name="department" required placeholder="ระบุหน่วยงานหรือแผนก "
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <!-- Added Field: Phone Number -->
+            <div>
+                <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="08xxxxxxxx" maxlength="10" pattern="[0-9]{10}"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                
+            </div>
+            
+            <!-- Added Field: Reason for Borrowing (Visible only for Borrowing) -->
+            <div id="reasonGroup" class="hidden">
+                <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลที่ขอยืม</label>
+                <textarea id="reason" name="reason" rows="2" placeholder="ระบุเหตุผลในการขอยืมอุปกรณ์"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"></textarea>
             </div>
 
             <!-- Due Date (Visible only for Borrowing) -->
@@ -105,7 +128,9 @@
     </div>
 
     <script>
-    // *** โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
+    // ***********************************************************************************
+    // *** สำคัญมาก: โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script (Code.gs) ***
+    // ***********************************************************************************
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcaCsZnPS3vDIWFLQhaT4di0frhkgXyn8PhwHhJPtLymHOczC_t_hT2xrpQD2VznA/exec";
 
     // ข้อมูลอุปกรณ์คงที่ (ชื่อและรายละเอียดเท่านั้น, สถานะจะถูกคำนวณแบบ Real-time)
@@ -130,6 +155,12 @@
     const loader = document.getElementById('loader');
     const loaderText = document.getElementById('loaderText');
     const submitBtn = document.getElementById('submitBtn');
+
+    // DOM references สำหรับช่องใหม่
+    const reasonGroup = document.getElementById('reasonGroup');
+    const reasonInput = document.getElementById('reason');
+    const dueDateInput = document.getElementById('dueDate');
+
 
     // Helper function สำหรับแสดง Loader
     function toggleLoader(show, text = 'กำลังบันทึกข้อมูล...') {
@@ -209,10 +240,15 @@
 
     // 2. คำนวณสถานะปัจจุบันจาก Log
     function calculateCurrentStatus(logs) {
+        // จัดเรียง logs ตาม timestamp (เก่าสุดไปใหม่สุด) เพื่อให้ log ใหม่สุดชนะ
+        // ต้องแปลง timestamp ที่เป็น string กลับมาเป็น Date object เพื่อเปรียบเทียบ
+        logs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
         const statusMap = {}; // { equipmentName: { action: 'ยืม'|'คืน', borrowerName: '...', dueDate: '...' } }
         
         // ประมวลผล Log เพื่อหาสถานะล่าสุด (Log ที่ใหม่ที่สุดจะชนะ)
         logs.forEach(log => {
+            // โค้ดนี้จะใช้ log ล่าสุด (จาก sort ด้านบน) เป็นสถานะปัจจุบัน
             statusMap[log.equipment] = {
                 action: log.action,
                 borrowerName: log.borrowerName,
@@ -226,6 +262,11 @@
     // 3. แสดงรายการอุปกรณ์พร้อมสถานะ Real-time
     function renderEquipmentList() {
         equipmentListDiv.innerHTML = ''; // Clear previous list
+
+        if (equipmentInventory.length === 0) {
+            equipmentListDiv.innerHTML = '<p class="text-center text-gray-500">ไม่พบรายการอุปกรณ์ใน Inventory</p>';
+            return;
+        }
 
         equipmentInventory.forEach(item => {
             const statusInfo = currentEquipmentStatus[item.name];
@@ -267,7 +308,9 @@
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // Attempt to read error message from body if available
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}. Response: ${errorText.substring(0, 100)}...`);
             }
 
             const result = await response.json();
@@ -293,13 +336,23 @@
 
     // 5. จัดการการเปลี่ยนแปลง Action (ยืม/คืน)
     actionSelect.addEventListener('change', (e) => {
-        // จัดการการแสดงช่องกำหนดการคืน
-        if (e.target.value === 'ยืม') {
-            dueDateGroup.classList.remove('hidden');
-            document.getElementById('dueDate').setAttribute('required', 'required');
+        const isBorrow = e.target.value === 'ยืม';
+        
+        // จัดการการแสดงช่องกำหนดการคืนและเหตุผลการยืม
+        dueDateGroup.classList.toggle('hidden', !isBorrow);
+        reasonGroup.classList.toggle('hidden', !isBorrow); // <-- เพิ่มการจัดการเหตุผลการยืม
+        
+        if (isBorrow) {
+            dueDateInput.setAttribute('required', 'required');
+            reasonInput.setAttribute('required', 'required'); // <-- กำหนดให้เหตุผลการยืมจำเป็น
+            // กำหนดวันที่คืนเริ่มต้นเป็น 3 วันหลังจากวันนี้ (เผื่อไว้)
+            const today = new Date();
+            const defaultDueDate = new Date(today);
+            defaultDueDate.setDate(today.getDate() + 3);
+            dueDateInput.value = defaultDueDate.toISOString().substring(0, 10);
         } else {
-            dueDateGroup.classList.add('hidden');
-            document.getElementById('dueDate').removeAttribute('required');
+            dueDateInput.removeAttribute('required');
+            reasonInput.removeAttribute('required'); // <-- ยกเลิกการบังคับกรอกเหตุผล
         }
         
         // อัปเดตรายการอุปกรณ์ใน Dropdown ตาม Action ที่เลือก
@@ -314,20 +367,24 @@
         const action = actionSelect.value;
         const equipment = equipmentSelect.value;
         const borrowerName = document.getElementById('borrowerName').value;
+        const department = document.getElementById('department').value; // <-- ช่องใหม่
+        const phoneNumber = document.getElementById('phoneNumber').value; // <-- ช่องใหม่
+        const reason = (action === 'ยืม') ? document.getElementById('reason').value : ''; // <-- ช่องใหม่
         const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
 
-        // 2. ตรวจสอบข้อมูลพื้นฐาน
-        if (equipmentSelect.value === "" || equipmentSelect.value.startsWith('***')) {
-             showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
-             return;
+
+        // 2. ตรวจสอบข้อมูลพื้นฐานเพิ่มเติม (กรณีที่ browser validation ไม่ทำงาน)
+        if (equipment === "" || equipment.startsWith('***')) {
+              showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
+              return;
         }
-        if (borrowerName.trim() === "") {
-             showMessage("❗ กรุณาระบุชื่อผู้ยืม / ผู้ทำการคืน", false);
-             return;
+        if (borrowerName.trim() === "" || department.trim() === "" || phoneNumber.trim() === "") {
+              showMessage("❗ กรุณากรอกข้อมูลผู้ยืม/ผู้คืนให้ครบถ้วน (ชื่อ, แผนก, เบอร์โทร)", false);
+              return;
         }
-        if (action === 'ยืม' && dueDate.trim() === "") {
-             showMessage("❗ กรุณาระบุวันกำหนดคืน", false);
-             return;
+        if (action === 'ยืม' && (dueDate.trim() === "" || reason.trim() === "")) {
+              showMessage("❗ กรุณาระบุวันกำหนดคืนและเหตุผลที่ขอยืมให้ครบถ้วน", false);
+              return;
         }
         
         // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด
@@ -351,6 +408,7 @@
         toggleLoader(true, 'กำลังบันทึกข้อมูล...');
 
         try {
+            // FormData จะรวบรวมข้อมูลจาก name ทุกตัวในฟอร์ม
             const formData = new FormData(form);
             const response = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
@@ -361,8 +419,10 @@
             
             if (result.status === 'success') {
                 showMessage(`✅ บันทึกการ${action}สำเร็จ! ข้อมูลถูกบันทึกใน Google Sheet แล้ว`, true);
+                
+                // รีเซ็ตฟอร์ม
                 form.reset(); 
-                actionSelect.dispatchEvent(new Event('change')); // รีเซ็ตการแสดง Due Date และ Dropdown
+                actionSelect.value = action; 
                 
                 // ดึงสถานะใหม่ทันทีหลังจากบันทึกสำเร็จ
                 await fetchRealtimeStatus(); 
@@ -381,10 +441,11 @@
 
     // Initial setup
     window.onload = () => {
-        fetchRealtimeStatus(); // ดึงสถานะจริงเมื่อโหลดหน้า
-        actionSelect.dispatchEvent(new Event('change')); // Set initial state for Due Date & Dropdown
+        // ดึงสถานะจริงเมื่อโหลดหน้า
+        fetchRealtimeStatus(); 
+        // Set initial state for Due Date & Dropdown (เรียก change event เพื่อให้แสดงผลลัพธ์เริ่มต้น)
+        actionSelect.dispatchEvent(new Event('change')); 
     };
 </script>
 </body>
 </html>
-
