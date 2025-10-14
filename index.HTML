@@ -7,28 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* เปลี่ยนฟอนต์เป็น 'Prompt' เพื่อความเป็นไทยและทันสมัย */
+        /* CSS ภายในสำหรับฟอนต์และสี (ตามบริบทการสนทนา) */
         body {
             font-family: 'Prompt', sans-serif;
             background-color: #e9ecef; /* Light gray-blue background */
         }
-        /* Shadow ที่ดูนุ่มนวลกว่าสำหรับ Card */
         .container-card {
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); 
         }
-        /* สีหลักของโรงพยาบาล (Hospital Blue) */
         .hospital-primary {
             background-color: #007bff; /* Blue */
         }
         .hospital-text {
             color: #007bff;
         }
-        .hospital-border {
-            border-color: #007bff;
-        }
-        /* Loader Animation */
         .loader {
-            border-top-color: #007bff; /* ใช้สีหลัก */
+            border-top-color: #007bff;
             -webkit-animation: spinner 1.5s linear infinite;
             animation: spinner 1.5s linear infinite;
         }
@@ -62,6 +56,7 @@
                 <div class="space-y-6">
                     <div>
                         <label for="action" class="block text-base font-medium text-gray-700 mb-1">การดำเนินการ <span class="text-red-500">*</span></label>
+                        <!-- NAME: action (สำหรับ doPost) -->
                         <select id="action" name="action" required 
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out appearance-none">
                             <option value="ยืม" selected>▶️ ยืมอุปกรณ์</option>
@@ -71,6 +66,7 @@
 
                     <div>
                         <label for="equipment" class="block text-base font-medium text-gray-700 mb-1">รายการอุปกรณ์ที่เลือก <span class="text-red-500">*</span></label>
+                        <!-- NAME: equipment (สำหรับ doPost) -->
                         <select id="equipment" name="equipment" required 
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out appearance-none">
                             <option value="" disabled selected>--- เลือกอุปกรณ์ที่สามารถทำรายการได้ ---</option>
@@ -79,6 +75,7 @@
 
                     <div>
                         <label for="borrowerName" class="block text-base font-medium text-gray-700 mb-1">ชื่อผู้ปฏิบัติงาน (ผู้ยืม/ผู้คืน) <span class="text-red-500">*</span></label>
+                        <!-- NAME: borrowerName (สำหรับ doPost) -->
                         <input type="text" id="borrowerName" name="borrowerName" required placeholder="เช่น: สมศักดิ์ ใจดี หรือ IT-1"
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
                     </div>
@@ -87,19 +84,23 @@
                 <div class="space-y-6">
                     <div id="departmentGroup">
                         <label for="department" class="block text-base font-medium text-gray-700 mb-1">หน่วยงาน / แผนก <span class="text-red-500">*</span></label>
+                        <!-- NAME: department (สำหรับ doPost) -->
                         <input type="text" id="department" name="department" placeholder="เช่น: ฝ่าย IT, แผนกผู้ป่วยนอก" required
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
                     </div>
 
+
+
                     <div id="phoneNumberGroup">
                         <label for="phoneNumber" class="block text-base font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
+                        <!-- NAME: phoneNumber (สำหรับ doPost) -->
                         <input 
-                            type="tel" 
+                            type="text" 
                             id="phoneNumber" 
                             name="phoneNumber" 
-                            placeholder="ตัวอย่าง: 0812345678 (10 หลัก)" 
+                            placeholder="ตัวอย่าง: 0910786627 (ต้องมี 10 หลัก รวม '0')" 
                             pattern="[0-9]{10}"
-                            title="Thai phone numbers must be 10 digits long (e.g., 0812345678)"
+                            title="เบอร์โทรศัพท์ต้องมี 10 หลัก เช่น 0912345678"
                             maxlength="10"
                             required
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
@@ -107,6 +108,7 @@
                     
                     <div id="dueDateGroup">
                         <label for="dueDate" class="block text-base font-medium text-gray-700 mb-1">📅 กำหนดการคืน <span class="text-red-500">*</span></label>
+                        <!-- NAME: dueDate (สำหรับ doPost) -->
                         <input type="date" id="dueDate" name="dueDate" required
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
                     </div>
@@ -116,6 +118,7 @@
             
             <div id="reasonGroup">
                 <label for="reason" class="block text-base font-medium text-gray-700 mb-1">เหตุผลในการยืม <span class="text-red-500">*</span></label>
+                <!-- NAME: reason (สำหรับ doPost) -->
                 <textarea id="reason" name="reason" rows="3" placeholder="โปรดระบุเหตุผลในการยืมอย่างละเอียด เช่น: ประชุมนอกสถานที่, อบรม, ใช้แทนเครื่องที่เสียชั่วคราว" required
                     class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-lg"></textarea>
             </div>
@@ -151,7 +154,8 @@
     // *****************************************************************************************************************
     // *** ⚠️ สำคัญมาก: โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
     // *****************************************************************************************************************
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcaCsZnPS3vDIWFLQhaT4di0frhkgXyn8PhwHhJPtLymHOczC_t_hT2xrpQD2VznA/exec";
+    // ใช้ URL ล่าสุดที่คุณให้มาในบริบทการสนทนา
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyI1nbOUJxM9Iqh5KdS795FqXpe1iMz0W8Q24e4VY7juonAm6jSYaC4uJd586MeCtg/exec"; 
 
     // ข้อมูลอุปกรณ์คงที่ (สามารถปรับเปลี่ยนได้ตามความจำเป็น)
     const equipmentInventory = [
@@ -402,7 +406,7 @@
             }
         } catch (error) {
             console.error("Fetch GET Error:", error);
-            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Apps Script: ${error.message}`, false);
+            showMessage(`❌ ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL`, false);
             equipmentListDiv.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-100 rounded-lg">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
         } finally {
             toggleLoader(false);
