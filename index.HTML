@@ -1,84 +1,100 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ยืม Labtop โรงพยาบาลแม่ระมาด</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container-card {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        .loader {
-            border-top-color: #3498db;
-            -webkit-animation: spinner 1.5s linear infinite;
-            animation: spinner 1.5s linear infinite;
-        }
-        @-webkit-keyframes spinner {
-            0% { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยืม Labtop โรงพยาบาลแม่ระมาด</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container-card {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen flex items-center justify-center">
 
-        <div class="container-card w-full max-w-4xl bg-white rounded-xl p-6 md:p-10">
-        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6 border-b pb-3">
-            ระบบยืม-คืน Labtop โรงพยาบาลแม่ระมาด
-        </h1>
+    <div class="container-card w-full max-w-4xl bg-white rounded-xl p-6 md:p-10">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6 border-b pb-3">
+            ระบบยืม-คืน Labtop โรงพยาบาลแม่ระมาด
+        </h1>
 
-                <form id="loanForm" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-800 border-l-4 border-blue-500 pl-3">บันทึกการยืม/คืน</h2>
-            
-                        <div>
-                <label for="action" class="block text-sm font-medium text-gray-700 mb-1">การดำเนินการ</label>
-                <select id="action" name="action" required 
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-                    <option value="ยืม">ยืมอุปกรณ์</option>
-                    <option value="คืน">คืนอุปกรณ์</option>
-                </select>
-            </div>
-
-                        <div>
-                <label for="equipment" class="block text-sm font-medium text-gray-700 mb-1">รายการอุปกรณ์ที่เลือก</label>
-                <select id="equipment" name="equipment" required 
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-                                    </select>
-            </div>
-
-                        <div>
-                <label for="borrowerName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ยืม / ผู้ทำการคืน</label>
-                <input type="text" id="borrowerName" name="borrowerName" required placeholder="ระบุชื่อ-นามสกุล หรือแผนก"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-            </div>
+        <form id="loanForm" class="space-y-6">
+            <h2 class="text-xl font-semibold text-gray-800 border-l-4 border-blue-500 pl-3">บันทึกการยืม/คืน</h2>
             
+            <!-- การดำเนินการ (ยืม/คืน) -->
+            <div>
+                <label for="action" class="block text-sm font-medium text-gray-700 mb-1">การดำเนินการ</label>
+                <select id="action" name="action" required 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                    <option value="ยืม">ยืมอุปกรณ์</option>
+                    <option value="คืน">คืนอุปกรณ์</option>
+                </select>
+            </div>
+
+            <!-- รายการอุปกรณ์ที่เลือก (อัปเดตตามสถานะ) -->
+            <div>
+                <label for="equipment" class="block text-sm font-medium text-gray-700 mb-1">รายการอุปกรณ์ที่เลือก</label>
+                <select id="equipment" name="equipment" required 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+
+            <!-- ชื่อผู้ยืม / ผู้ทำการคืน -->
+            <div>
+                <label for="borrowerName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ยืม / ผู้ทำการคืน</label>
+                <input type="text" id="borrowerName" name="borrowerName" required placeholder="ระบุชื่อ-นามสกุล หรือแผนก"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+            
+            <!-- หน่วยงาน / แผนก -->
             <div id="departmentGroup">
                 <label for="department" class="block text-sm font-medium text-gray-700 mb-1">หน่วยงาน / แผนก</label>
                 <input type="text" id="department" name="department" placeholder="เช่น: ฝ่าย IT, แผนกผู้ป่วยนอก" required
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
             </div>
 
+            <!-- เบอร์โทรศัพท์ติดต่อ (อัปเดตการตรวจสอบรูปแบบ) -->
             <div id="phoneNumberGroup">
                 <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ</label>
-                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="เช่น: 08x-xxxxxxx" required
+                <input 
+                    type="tel" 
+                    id="phoneNumber" 
+                    name="phoneNumber" 
+                    placeholder="เช่น: 08x-xxxxxxx" 
+                    pattern="[0-9]{10}"
+                    title="Thai phone numbers must be 10 digits long (e.g., 0812345678)"
+                    maxlength="10"
+                    required
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
             </div>
 
-                        <div id="dueDateGroup">
-                <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">กำหนดการคืน</label>
-                <input type="date" id="dueDate" name="dueDate" 
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-            </div>
+            <!-- กำหนดการคืน (ซ่อนเมื่อเลือก 'คืน') -->
+            <div id="dueDateGroup">
+                <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">กำหนดการคืน</label>
+                <input type="date" id="dueDate" name="dueDate" 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
             
+            <!-- เหตุผลในการยืม (ซ่อนเมื่อเลือก 'คืน') -->
             <div id="reasonGroup" class="hidden">
                 <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลในการยืม</label>
                 <textarea id="reason" name="reason" rows="2" placeholder="เช่น: ประชุมนอกสถานที่, อบรม, ใช้แทนเครื่องที่เสีย"
@@ -86,289 +102,321 @@
             </div>
 
 
-                        <button type="submit" id="submitBtn"
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-[1.01]">
-                บันทึกการดำเนินการ
-            </button>
-        </form>
+            <!-- ปุ่ม Submit -->
+            <button type="submit" id="submitBtn"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-[1.01]">
+                บันทึกการดำเนินการ
+            </button>
+        </form>
 
-                <div id="statusMessage" class="mt-4 p-4 rounded-lg text-sm hidden"></div>
+        <!-- ข้อความสถานะ/ข้อผิดพลาด -->
+        <div id="statusMessage" class="mt-4 p-4 rounded-lg text-sm hidden"></div>
 
-                <div id="loader" class="mt-4 flex justify-center items-center hidden">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
-            <span class="ml-3 text-gray-600" id="loaderText">กำลังดึงสถานะอุปกรณ์...</span>
-        </div>
+        <!-- Loader -->
+        <div id="loader" class="mt-4 flex justify-center items-center hidden">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
+            <span class="ml-3 text-gray-600" id="loaderText">กำลังดึงสถานะอุปกรณ์...</span>
+        </div>
 
-                <div class="mt-8 pt-6 border-t">
-            <h2 class="text-xl font-semibold text-gray-800 border-l-4 border-blue-500 pl-3 mb-4">สถานะอุปกรณ์ (Real-time จาก Google Sheet)</h2>
-            <p class="text-xs text-gray-500 mb-4">
-                *สถานะด้านล่างนี้ถูกคำนวณจาก Log ล่าสุดใน Google Sheet
-            </p>
-            <div id="equipmentList" class="space-y-3">
-                <p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>
-                            </div>
-        </div>
-    </div>
+        <!-- สถานะอุปกรณ์ Real-time -->
+        <div class="mt-8 pt-6 border-t">
+            <h2 class="text-xl font-semibold text-gray-800 border-l-4 border-blue-500 pl-3 mb-4">สถานะอุปกรณ์ (Real-time จาก Google Sheet)</h2>
+            <p class="text-xs text-gray-500 mb-4">
+                *สถานะด้านล่างนี้ถูกคำนวณจาก Log ล่าสุดใน Google Sheet
+            </p>
+            <div id="equipmentList" class="space-y-3">
+                <p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>
+            </div>
+        </div>
+    </div>
     
-        <script>
-    // *** ⚠️ สำคัญมาก: โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcaCsZnPS3vDIWFLQhaT4di0frhkgXyn8PhwHhJPtLymHOczC_t_hT2xrpQD2VznA/exec";
+    <script>
+    // *****************************************************************************************************************
+    // *** ⚠️ สำคัญมาก: โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
+    // *****************************************************************************************************************
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcaCsZnPS3vDIWFLQhaT4di0frhkgXyn8PhwHhJPtLymHOczC_t_hT2xrpQD2VznA/exec";
 
-    // ข้อมูลอุปกรณ์คงที่
-    const equipmentInventory = [
-        { name: "HP Pavilion Gaming", details: "（รับ 1/9/2020 RMC 16994 No.7440-013-0002/0033）" },
-        { name: "Asus X512DA-EJ1021T (15.6) สีส้ม", details: "（รับ 15/5/2020 RMC 16760 NO.7440-013-0002/0030）" },
-        { name: "Asus N/b asus D413A สีดำ", details: "（รับ 15/5/2020 RMC 14993 NO.7440-013-0002/0026）" },
-        { name: "MSI modern 14 b5m สีดำ เครื่องเล็ก", details: "（รับ 25/08/2021 RMC 17609 NO.7440-013-0002/0040）" },
-        { name: "MSI GF63 Thin 10SCXR-1634TH สีดำ (15.6) ", details: "（รับ 01/10/2021 RMC 17649 NO.7440-013-0002/0041）" },
-        { name: "Lenovo ThinkPad AMD RYZEN 5 4000 SERIES สีดำ", details: "（ไม่มีเลขครุภัณฑ์）" },
-    ];
+    // ข้อมูลอุปกรณ์คงที่ (สามารถปรับเปลี่ยนได้ตามความจำเป็น)
+    const equipmentInventory = [
+        { name: "HP Pavilion Gaming", details: "（รับ 1/9/2020 RMC 16994 No.7440-013-0002/0033）" },
+        { name: "Asus X512DA-EJ1021T (15.6) สีส้ม", details: "（รับ 15/5/2020 RMC 16760 NO.7440-013-0002/0030）" },
+        { name: "Asus N/b asus D413A สีดำ", details: "（รับ 15/5/2020 RMC 14993 NO.7440-013-0002/0026）" },
+        { name: "MSI modern 14 b5m สีดำ เครื่องเล็ก", details: "（รับ 25/08/2021 RMC 17609 NO.7440-013-0002/0040）" },
+        { name: "MSI GF63 Thin 10SCXR-1634TH สีดำ (15.6) ", details: "（รับ 01/10/2021 RMC 17649 NO.7440-013-0002/0041）" },
+        { name: "Lenovo ThinkPad AMD RYZEN 5 4000 SERIES สีดำ", details: "（ไม่มีเลขครุภัณฑ์）" },
+    ];
 
-    let currentEquipmentStatus = {}; // เก็บสถานะล่าสุดของอุปกรณ์
+    let currentEquipmentStatus = {}; // เก็บสถานะล่าสุดของอุปกรณ์
 
-    // Element Selectors
-    const form = document.getElementById('loanForm');
-    const equipmentSelect = document.getElementById('equipment');
-    const equipmentListDiv = document.getElementById('equipmentList');
-    const actionSelect = document.getElementById('action');
-    const dueDateGroup = document.getElementById('dueDateGroup');
+    // Element Selectors
+    const form = document.getElementById('loanForm');
+    const equipmentSelect = document.getElementById('equipment');
+    const equipmentListDiv = document.getElementById('equipmentList');
+    const actionSelect = document.getElementById('action');
+    const dueDateGroup = document.getElementById('dueDateGroup');
     const reasonGroup = document.getElementById('reasonGroup');
     const departmentInput = document.getElementById('department');
     const phoneNumberInput = document.getElementById('phoneNumber');
     const reasonTextarea = document.getElementById('reason');
-    const statusMessage = document.getElementById('statusMessage');
-    const loader = document.getElementById('loader');
-    const loaderText = document.getElementById('loaderText');
-    const submitBtn = document.getElementById('submitBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const loader = document.getElementById('loader');
+    const loaderText = document.getElementById('loaderText');
+    const submitBtn = document.getElementById('submitBtn');
 
-    // Helper function สำหรับแสดง Loader และจัดการปุ่ม
-    function toggleLoader(show, text = 'กำลังบันทึกข้อมูล...') {
-        loaderText.textContent = text;
-        if (show) {
-            loader.classList.remove('hidden');
-            submitBtn.disabled = true;
-        } else {
-            loader.classList.add('hidden');
-            submitBtn.disabled = false;
-        }
-    }
+    // Helper function สำหรับแสดง Loader และจัดการปุ่ม
+    function toggleLoader(show, text = 'กำลังบันทึกข้อมูล...') {
+        loaderText.textContent = text;
+        if (show) {
+            loader.classList.remove('hidden');
+            submitBtn.disabled = true;
+        } else {
+            loader.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
+    }
 
-    // Helper function สำหรับแสดงสถานะข้อความ
-    function showMessage(message, isSuccess = true) {
-        statusMessage.textContent = message;
-        statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
-        statusMessage.classList.add(isSuccess ? 'bg-green-100' : 'bg-red-100', isSuccess ? 'text-green-700' : 'text-red-700');
-        setTimeout(() => {
-            statusMessage.classList.add('hidden');
-        }, 5000);
-    }
+    // Helper function สำหรับแสดงสถานะข้อความ
+    function showMessage(message, isSuccess = true) {
+        statusMessage.textContent = message;
+        statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+        statusMessage.classList.add(isSuccess ? 'bg-green-100' : 'bg-red-100', isSuccess ? 'text-green-700' : 'text-red-700');
+        setTimeout(() => {
+            statusMessage.classList.add('hidden');
+        }, 5000);
+    }
 
-    // 1. สร้างและอัปเดต Dropdown List อุปกรณ์ตามสถานะและ Action ที่เลือก
-    function updateEquipmentSelectOptions() {
-        const selectedAction = actionSelect.value;
-        const isBorrowAction = selectedAction === 'ยืม';
-        
-        equipmentSelect.innerHTML = '<option value="" disabled selected>--- เลือกอุปกรณ์ ---</option>';
+    // 1. สร้างและอัปเดต Dropdown List อุปกรณ์ตามสถานะและ Action ที่เลือก
+    function updateEquipmentSelectOptions() {
+        const selectedAction = actionSelect.value;
+        const isBorrowAction = selectedAction === 'ยืม';
+        
+        equipmentSelect.innerHTML = '<option value="" disabled selected>--- เลือกอุปกรณ์ ---</option>';
 
-        let optionsAdded = 0;
+        let optionsAdded = 0;
 
-        equipmentInventory.forEach(item => {
-            const equipmentName = item.name;
-            const statusInfo = currentEquipmentStatus[equipmentName];
-            const isAvailable = !statusInfo || statusInfo.action === 'คืน';
+        equipmentInventory.forEach(item => {
+            const equipmentName = item.name;
+            const statusInfo = currentEquipmentStatus[equipmentName];
+            // สถานะพร้อมใช้งานคือ: ไม่มี log หรือ log ล่าสุดคือ 'คืน'
+            const isAvailable = !statusInfo || statusInfo.action === 'คืน';
 
-            let shouldAdd = false;
-            let displayStatus = item.details;
+            let shouldAdd = false;
+            let displayStatus = item.details;
 
-            if (isBorrowAction) {
-                // ยืม: แสดงเฉพาะอุปกรณ์ที่พร้อมใช้งาน
-                if (isAvailable) {
-                    shouldAdd = true;
-                    displayStatus = `${item.details} (พร้อมให้ยืม)`;
-                }
-            } else {
-                // คืน: แสดงเฉพาะอุปกรณ์ที่ถูกยืมอยู่
-                if (!isAvailable) {
-                    shouldAdd = true;
-                    const borrower = statusInfo.borrowerName || 'ไม่ระบุ';
-                    displayStatus = `${item.details} (กำลังยืมโดย: ${borrower})`;
-                }
-            }
+            if (isBorrowAction) {
+                // ยืม: แสดงเฉพาะอุปกรณ์ที่พร้อมใช้งาน
+                if (isAvailable) {
+                    shouldAdd = true;
+                    displayStatus = `${item.details} (พร้อมให้ยืม)`;
+                }
+            } else {
+                // คืน: แสดงเฉพาะอุปกรณ์ที่ถูกยืมอยู่
+                if (!isAvailable) {
+                    shouldAdd = true;
+                    const borrower = statusInfo.borrowerName || 'ไม่ระบุ';
+                    const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
+                    displayStatus = `${item.details} (กำลังยืมโดย: ${borrower}, คืน: ${dueDate})`;
+                }
+            }
 
-            if (shouldAdd) {
-                const option = document.createElement('option');
-                option.value = equipmentName;
-                option.textContent = `${equipmentName} ${displayStatus}`;
-                equipmentSelect.appendChild(option);
-                optionsAdded++;
-            }
-        });
+            if (shouldAdd) {
+                const option = document.createElement('option');
+                option.value = equipmentName;
+                option.textContent = `${equipmentName} ${displayStatus}`;
+                equipmentSelect.appendChild(option);
+                optionsAdded++;
+            }
+        });
 
-        // เพิ่มตัวเลือกแจ้งเตือนหากไม่มีอุปกรณ์ให้เลือกตาม Action
-        if (optionsAdded === 0) {
-            const msg = document.createElement('option');
-            msg.value = "";
-            msg.disabled = true;
-            msg.textContent = isBorrowAction ? '*** ไม่มีอุปกรณ์พร้อมให้ยืมในขณะนี้ ***' : '*** ไม่มีอุปกรณ์ที่ถูกยืมอยู่ ***';
-            equipmentSelect.appendChild(msg);
-        }
-    }
+        // เพิ่มตัวเลือกแจ้งเตือนหากไม่มีอุปกรณ์ให้เลือกตาม Action
+        if (optionsAdded === 0) {
+            const msg = document.createElement('option');
+            msg.value = "";
+            msg.disabled = true;
+            msg.textContent = isBorrowAction ? '*** ไม่มีอุปกรณ์พร้อมให้ยืมในขณะนี้ ***' : '*** ไม่มีอุปกรณ์ที่ถูกยืมอยู่ ***';
+            equipmentSelect.appendChild(msg);
+        }
+    }
 
 
-    // 2. คำนวณสถานะปัจจุบันจาก Log
-    function calculateCurrentStatus(logs) {
-        const statusMap = {}; 
-        // ประมวลผล Log เพื่อหาสถานะล่าสุด (Log ที่ใหม่ที่สุดจะชนะ)
-        logs.forEach(log => {
-            statusMap[log.equipment] = {
-                action: log.action,
-                borrowerName: log.borrowerName,
-                dueDate: log.dueDate
-            };
-        });
+    // 2. คำนวณสถานะปัจจุบันจาก Log
+    function calculateCurrentStatus(logs) {
+        const statusMap = {}; 
+        // ประมวลผล Log เพื่อหาสถานะล่าสุด (Log ที่ใหม่ที่สุดจะชนะ)
+        logs.forEach(log => {
+            statusMap[log.equipment] = {
+                action: log.action,
+                borrowerName: log.borrowerName,
+                dueDate: log.dueDate
+            };
+        });
 
-        currentEquipmentStatus = statusMap;
-    }
+        currentEquipmentStatus = statusMap;
+    }
 
-    // 3. แสดงรายการอุปกรณ์พร้อมสถานะ Real-time
-    function renderEquipmentList() {
-        equipmentListDiv.innerHTML = ''; 
+    // 3. แสดงรายการอุปกรณ์พร้อมสถานะ Real-time
+    function renderEquipmentList() {
+        equipmentListDiv.innerHTML = ''; 
 
-        equipmentInventory.forEach(item => {
-            const statusInfo = currentEquipmentStatus[item.name];
-            let statusText = '';
-            let statusColor = '';
+        equipmentInventory.forEach(item => {
+            const statusInfo = currentEquipmentStatus[item.name];
+            let statusText = '';
+            let statusColor = '';
 
-            if (statusInfo && statusInfo.action === 'ยืม') {
-                // ถูกยืม
-                const borrower = statusInfo.borrowerName || 'ไม่ระบุชื่อ';
-                const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
-                statusText = `⛔ ถูกยืม โดย: ${borrower} (กำหนดคืน: ${dueDate})`;
-                statusColor = 'bg-red-100 text-red-700 border-red-300';
-            } else {
-                // พร้อมใช้งาน
-                statusText = '✅ พร้อมใช้งาน';
-                statusColor = 'bg-green-100 text-green-700 border-green-300';
-            }
+            if (statusInfo && statusInfo.action === 'ยืม') {
+                // ถูกยืม
+                const borrower = statusInfo.borrowerName || 'ไม่ระบุชื่อ';
+                const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
+                statusText = `⛔ ถูกยืม โดย: ${borrower} (กำหนดคืน: ${dueDate})`;
+                statusColor = 'bg-red-100 text-red-700 border-red-300';
+            } else {
+                // พร้อมใช้งาน
+                statusText = '✅ พร้อมใช้งาน';
+                statusColor = 'bg-green-100 text-green-700 border-green-300';
+            }
 
-            const itemDiv = document.createElement('div');
-            itemDiv.className = `p-3 rounded-lg border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out ${statusColor}`;
-            itemDiv.innerHTML = `
-                <span class="font-medium text-gray-800">${item.name}</span>
-                <span class="text-xs text-gray-500 mt-1 md:mt-0 md:ml-4 flex-grow">${item.details}</span>
-                <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
-            `;
-            equipmentListDiv.appendChild(itemDiv);
-        });
-    }
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `p-3 rounded-lg border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out ${statusColor}`;
+            itemDiv.innerHTML = `
+                <span class="font-medium text-gray-800">${item.name}</span>
+                <span class="text-xs text-gray-500 mt-1 md:mt-0 md:ml-4 flex-grow">${item.details}</span>
+                <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
+            `;
+            equipmentListDiv.appendChild(itemDiv);
+        });
+    }
 
-    // 4. ดึง Log ทั้งหมดจาก Apps Script (GET request)
-    async function fetchRealtimeStatus() {
-        toggleLoader(true, 'กำลังดึงสถานะอุปกรณ์...');
-        equipmentListDiv.innerHTML = '<p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>';
+    // 4. ดึง Log ทั้งหมดจาก Apps Script (GET request)
+    async function fetchRealtimeStatus() {
+        toggleLoader(true, 'กำลังดึงสถานะอุปกรณ์...');
+        equipmentListDiv.innerHTML = '<p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>';
 
-        try {
-            const response = await fetch(APPS_SCRIPT_URL, {
-                method: 'GET',
-                redirect: 'follow', 
-            });
+        try {
+            // ใช้ exponential backoff สำหรับการเรียก API
+            const maxRetries = 3;
+            let response;
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    response = await fetch(APPS_SCRIPT_URL, {
+                        method: 'GET',
+                        redirect: 'follow', 
+                        // เพิ่มพารามิเตอร์เพื่อให้ DoGet ทำงานแม้ไม่มี body
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' } 
+                    });
 
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                calculateCurrentStatus(result.logs);
-                renderEquipmentList();
-                updateEquipmentSelectOptions(); 
-            } else {
-                showMessage(`❌ เกิดข้อผิดพลาดในการดึงสถานะ: ${result.message || 'ไม่ทราบข้อผิดพลาด'}`, false);
-                equipmentListDiv.innerHTML = `<p class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดสถานะ: ${result.message || 'กรุณาตรวจสอบ Console'}</p>`;
-            }
-        } catch (error) {
-            console.error("Fetch GET Error:", error);
-            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Apps Script: ${error.message}`, false);
-            equipmentListDiv.innerHTML = `<p class="text-center text-red-500">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
-        } finally {
-            toggleLoader(false);
-        }
-    }
+                    if (response.ok) break; // สำเร็จ
+                    
+                    // หากไม่สำเร็จ ให้รอแล้วลองใหม่
+                    if (i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-    // 5. จัดการการเปลี่ยนแปลง Action (ยืม/คืน)
-    actionSelect.addEventListener('change', (e) => {
-        const isBorrow = e.target.value === 'ยืม';
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error; // โยน error ออกไปถ้าลองครบแล้ว
+                }
+            }
+            
+            if (!response || !response.ok) {
+                throw new Error("Failed to fetch status after multiple retries.");
+            }
 
-        // จัดการการแสดง/ซ่อนช่อง Due Date และ Reason
-        if (isBorrow) {
-            dueDateGroup.classList.remove('hidden');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                calculateCurrentStatus(result.logs);
+                renderEquipmentList();
+                updateEquipmentSelectOptions(); 
+            } else {
+                showMessage(`❌ เกิดข้อผิดพลาดในการดึงสถานะ: ${result.message || 'ไม่ทราบข้อผิดพลาด'}`, false);
+                equipmentListDiv.innerHTML = `<p class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดสถานะ: ${result.message || 'กรุณาตรวจสอบ Console'}</p>`;
+            }
+        } catch (error) {
+            console.error("Fetch GET Error:", error);
+            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Apps Script: ${error.message}`, false);
+            equipmentListDiv.innerHTML = `<p class="text-center text-red-500">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
+        } finally {
+            toggleLoader(false);
+        }
+    }
+
+    // 5. จัดการการเปลี่ยนแปลง Action (ยืม/คืน)
+    actionSelect.addEventListener('change', (e) => {
+        const isBorrow = e.target.value === 'ยืม';
+
+        // จัดการการแสดง/ซ่อนช่อง Due Date และ Reason
+        if (isBorrow) {
+            dueDateGroup.classList.remove('hidden');
             reasonGroup.classList.remove('hidden'); 
-            document.getElementById('dueDate').setAttribute('required', 'required');
+            document.getElementById('dueDate').setAttribute('required', 'required');
             document.getElementById('reason').setAttribute('required', 'required');
-        } else {
-            dueDateGroup.classList.add('hidden');
+        } else {
+            dueDateGroup.classList.add('hidden');
             reasonGroup.classList.add('hidden'); 
-            document.getElementById('dueDate').removeAttribute('required');
+            document.getElementById('dueDate').removeAttribute('required');
             document.getElementById('reason').removeAttribute('required');
-        }
+        }
         
         // หน่วยงานและเบอร์โทรศัพท์ ถูกกำหนดให้เป็น Required เสมอ
         departmentInput.setAttribute('required', 'required');
         phoneNumberInput.setAttribute('required', 'required');
 
-        // อัปเดตรายการอุปกรณ์ใน Dropdown ตาม Action ที่เลือก
-        updateEquipmentSelectOptions();
-    });
+        // อัปเดตรายการอุปกรณ์ใน Dropdown ตาม Action ที่เลือก
+        updateEquipmentSelectOptions();
+    });
 
-    // 6. จัดการการ Submit Form (POST request)
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    // 6. จัดการการ Submit Form (POST request)
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-        // 1. ดึงข้อมูล
-        const action = actionSelect.value;
-        const equipment = equipmentSelect.value;
-        const borrowerName = document.getElementById('borrowerName').value;
-        const department = departmentInput.value; 
-        const phoneNumber = phoneNumberInput.value; 
-        const reason = (action === 'ยืม') ? reasonTextarea.value : ''; 
-        const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
-
-
-        // 2. ตรวจสอบข้อมูลพื้นฐาน (รวมถึงฟิลด์ใหม่)
-        if (equipmentSelect.value === "" || equipmentSelect.value.startsWith('***')) {
-             showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
-             return;
-        }
-        if (borrowerName.trim() === "" || department.trim() === "" || phoneNumber.trim() === "") {
-             showMessage("❗ กรุณาระบุ ชื่อ, หน่วยงาน/แผนก และ เบอร์โทรศัพท์ ให้ครบถ้วน", false);
-             return;
-        }
-
-        if (action === 'ยืม' && (dueDate.trim() === "" || reason.trim() === "")) {
-             showMessage("❗ กรุณาระบุวันกำหนดคืน และ เหตุผลในการยืม ให้ครบถ้วน", false);
-             return;
-        }
-        
-        // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด
-        const currentStatus = currentEquipmentStatus[equipment];
-        const isCurrentlyBorrowed = currentStatus && currentStatus.action === 'ยืม';
-
-        if (action === 'ยืม' && isCurrentlyBorrowed) {
-            showMessage(`❌ อุปกรณ์ ${equipment} ถูกยืมอยู่โดย ${currentStatus.borrowerName} ไม่สามารถยืมซ้ำได้!`, false);
-            return;
-        }
-
-        if (action === 'คืน' && !isCurrentlyBorrowed) {
-            showMessage(`❌ อุปกรณ์ ${equipment} ไม่ได้อยู่ในสถานะถูกยืม ไม่สามารถทำรายการคืนได้!`, false);
-            return;
-        }
+        // 1. ดึงข้อมูล
+        const action = actionSelect.value;
+        const equipment = equipmentSelect.value;
+        const borrowerName = document.getElementById('borrowerName').value;
+        const department = departmentInput.value; 
+        const phoneNumber = phoneNumberInput.value; 
+        const reason = (action === 'ยืม') ? reasonTextarea.value : ''; 
+        const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
 
 
-        // 4. ดำเนินการ POST
-        toggleLoader(true, 'กำลังบันทึกข้อมูล...');
+        // 2. ตรวจสอบข้อมูลพื้นฐาน
+        if (equipmentSelect.value === "" || equipmentSelect.value.startsWith('***')) {
+             showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
+             return;
+        }
+        // เนื่องจากมีการใช้ HTML5 validation (pattern) แล้ว เราสามารถลดการตรวจสอบเบอร์โทรศัพท์ที่นี่ได้
+        if (borrowerName.trim() === "" || department.trim() === "") {
+             showMessage("❗ กรุณาระบุ ชื่อ และ หน่วยงาน/แผนก ให้ครบถ้วน", false);
+             return;
+        }
+
+        if (action === 'ยืม' && (dueDate.trim() === "" || reason.trim() === "")) {
+             showMessage("❗ กรุณาระบุวันกำหนดคืน และ เหตุผลในการยืม ให้ครบถ้วน", false);
+             return;
+        }
         
-        // สร้าง URLSearchParams เพื่อรวมพารามิเตอร์ทั้งหมด
+        // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด
+        const currentStatus = currentEquipmentStatus[equipment];
+        const isCurrentlyBorrowed = currentStatus && currentStatus.action === 'ยืม';
+
+        if (action === 'ยืม' && isCurrentlyBorrowed) {
+            showMessage(`❌ อุปกรณ์ ${equipment} ถูกยืมอยู่โดย ${currentStatus.borrowerName} ไม่สามารถยืมซ้ำได้!`, false);
+            return;
+        }
+
+        if (action === 'คืน' && !isCurrentlyBorrowed) {
+            showMessage(`❌ อุปกรณ์ ${equipment} ไม่ได้อยู่ในสถานะถูกยืม ไม่สามารถทำรายการคืนได้!`, false);
+            return;
+        }
+
+
+        // 4. ดำเนินการ POST
+        toggleLoader(true, 'กำลังบันทึกข้อมูล...');
+        
+        // สร้าง URLSearchParams เพื่อรวมพารามิเตอร์ทั้งหมดสำหรับ POST
         const params = new URLSearchParams();
         params.append('action', action);
         params.append('equipment', equipment);
@@ -377,43 +425,66 @@
         params.append('phoneNumber', phoneNumber); 
         params.append('reason', reason); 
         params.append('dueDate', dueDate);
-
-        try {
-            const response = await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: params, 
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+        
+        // ฟังก์ชันสำหรับเรียก API พร้อม Exponential Backoff
+        const postDataWithRetry = async () => {
+            const maxRetries = 3;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: params, 
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    });
+                    
+                    if (response.ok) return response; // สำเร็จ
+                    
+                    if (i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error; // โยน error ออกไปถ้าลองครบแล้ว
                 }
-            });
+            }
+            throw new Error("Failed to submit data after multiple retries.");
+        };
 
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                showMessage(`✅ บันทึกการ${action}สำเร็จ! ข้อมูลถูกบันทึกใน Google Sheet แล้ว`, true);
-                form.reset(); 
-                actionSelect.dispatchEvent(new Event('change')); 
-                
-                // ดึงสถานะใหม่ทันทีหลังจากบันทึกสำเร็จ
-                await fetchRealtimeStatus(); 
 
-            } else {
-                showMessage(`❌ เกิดข้อผิดพลาดในการบันทึก: ${result.message || 'ไม่สามารถติดต่อ Google Sheet ได้'}`, false);
-            }
+        try {
+            const response = await postDataWithRetry();
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage(`✅ บันทึกการ${action}สำเร็จ! ข้อมูลถูกบันทึกใน Google Sheet แล้ว`, true);
+                form.reset(); 
+                actionSelect.dispatchEvent(new Event('change')); 
+                
+                // ดึงสถานะใหม่ทันทีหลังจากบันทึกสำเร็จ
+                await fetchRealtimeStatus(); 
 
-        } catch (error) {
-            console.error("Fetch Error:", error);
-            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, false);
-        } finally {
-            toggleLoader(false);
-        }
-    });
+            } else {
+                showMessage(`❌ เกิดข้อผิดพลาดในการบันทึก: ${result.message || 'ไม่สามารถติดต่อ Google Sheet ได้'}`, false);
+            }
 
-    // Initial setup
-    window.onload = () => {
-        fetchRealtimeStatus(); // ดึงสถานะจริงเมื่อโหลดหน้า
-        actionSelect.dispatchEvent(new Event('change')); // Set initial state for Due Date & Dropdown
-    };
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, false);
+        } finally {
+            toggleLoader(false);
+        }
+    });
+
+    // Initial setup
+    window.onload = () => {
+        // เมื่อโหลดหน้า ให้ดึงสถานะจริงและตั้งค่าฟอร์มเริ่มต้น
+        fetchRealtimeStatus(); 
+        actionSelect.dispatchEvent(new Event('change')); // Set initial state for Due Date & Dropdown
+    };
 </script>
 </body>
 </html>
