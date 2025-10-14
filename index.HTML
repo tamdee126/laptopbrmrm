@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ยืม Labtop โรงพยาบาลแม่ระมาด</title>
+    <title>ระบบยืม-คืน Labtop โรงพยาบาลแม่ระมาด</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* เปลี่ยนฟอนต์เป็น 'Prompt' เพื่อความเป็นไทยและทันสมัย */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Prompt', sans-serif;
+            background-color: #e9ecef; /* Light gray-blue background */
         }
+        /* Shadow ที่ดูนุ่มนวลกว่าสำหรับ Card */
         .container-card {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); 
         }
+        /* สีหลักของโรงพยาบาล (Hospital Blue) */
+        .hospital-primary {
+            background-color: #007bff; /* Blue */
+        }
+        .hospital-text {
+            color: #007bff;
+        }
+        .hospital-border {
+            border-color: #007bff;
+        }
+        /* Loader Animation */
         .loader {
-            border-top-color: #3498db;
+            border-top-color: #007bff; /* ใช้สีหลัก */
             -webkit-animation: spinner 1.5s linear infinite;
             animation: spinner 1.5s linear infinite;
         }
@@ -31,101 +44,103 @@
 </head>
 <body class="p-4 md:p-8 min-h-screen flex items-center justify-center">
 
-    <div class="container-card w-full max-w-4xl bg-white rounded-xl p-6 md:p-10">
-        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6 border-b pb-3">
-            ระบบยืม-คืน Labtop โรงพยาบาลแม่ระมาด
-        </h1>
-
+    <div class="container-card w-full max-w-5xl bg-white rounded-xl p-6 md:p-10">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl lg:text-4xl font-extrabold hospital-text mb-2">
+                🩺 ระบบยืม-คืนอุปกรณ์ IT
+            </h1>
+            <p class="text-xl font-semibold text-gray-600 border-b pb-4">
+                โรงพยาบาลแม่ระมาด (Labtop & Equipment Management)
+            </p>
+        </header>
+        
         <form id="loanForm" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-800 border-l-4 border-blue-500 pl-3">บันทึกการยืม/คืน</h2>
+            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-blue-500 pl-3 mb-6">📝 บันทึกการดำเนินการ (ยืม/คืน)</h2>
             
-            <!-- การดำเนินการ (ยืม/คืน) -->
-            <div>
-                <label for="action" class="block text-sm font-medium text-gray-700 mb-1">การดำเนินการ</label>
-                <select id="action" name="action" required 
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-                    <option value="ยืม">ยืมอุปกรณ์</option>
-                    <option value="คืน">คืนอุปกรณ์</option>
-                </select>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div class="space-y-6">
+                    <div>
+                        <label for="action" class="block text-base font-medium text-gray-700 mb-1">การดำเนินการ <span class="text-red-500">*</span></label>
+                        <select id="action" name="action" required 
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out appearance-none">
+                            <option value="ยืม" selected>▶️ ยืมอุปกรณ์</option>
+                            <option value="คืน">↩️ คืนอุปกรณ์</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="equipment" class="block text-base font-medium text-gray-700 mb-1">รายการอุปกรณ์ที่เลือก <span class="text-red-500">*</span></label>
+                        <select id="equipment" name="equipment" required 
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out appearance-none">
+                            <option value="" disabled selected>--- เลือกอุปกรณ์ที่สามารถทำรายการได้ ---</option>
+                            </select>
+                    </div>
+
+                    <div>
+                        <label for="borrowerName" class="block text-base font-medium text-gray-700 mb-1">ชื่อผู้ปฏิบัติงาน (ผู้ยืม/ผู้คืน) <span class="text-red-500">*</span></label>
+                        <input type="text" id="borrowerName" name="borrowerName" required placeholder="เช่น: สมศักดิ์ ใจดี หรือ IT-1"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div id="departmentGroup">
+                        <label for="department" class="block text-base font-medium text-gray-700 mb-1">หน่วยงาน / แผนก <span class="text-red-500">*</span></label>
+                        <input type="text" id="department" name="department" placeholder="เช่น: ฝ่าย IT, แผนกผู้ป่วยนอก" required
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
+                    </div>
+
+                    <div id="phoneNumberGroup">
+                        <label for="phoneNumber" class="block text-base font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber" 
+                            name="phoneNumber" 
+                            placeholder="ตัวอย่าง: 0812345678 (10 หลัก)" 
+                            pattern="[0-9]{10}"
+                            title="Thai phone numbers must be 10 digits long (e.g., 0812345678)"
+                            maxlength="10"
+                            required
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
+                    </div>
+                    
+                    <div id="dueDateGroup">
+                        <label for="dueDate" class="block text-base font-medium text-gray-700 mb-1">📅 กำหนดการคืน <span class="text-red-500">*</span></label>
+                        <input type="date" id="dueDate" name="dueDate" required
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
+                    </div>
+
+                </div>
+            </div> <div id="reasonGroup">
+                <label for="reason" class="block text-base font-medium text-gray-700 mb-1">เหตุผลในการยืม <span class="text-red-500">*</span></label>
+                <textarea id="reason" name="reason" rows="3" placeholder="โปรดระบุเหตุผลในการยืมอย่างละเอียด เช่น: ประชุมนอกสถานที่, อบรม, ใช้แทนเครื่องที่เสียชั่วคราว" required
+                    class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-lg"></textarea>
             </div>
 
-            <!-- รายการอุปกรณ์ที่เลือก (อัปเดตตามสถานะ) -->
-            <div>
-                <label for="equipment" class="block text-sm font-medium text-gray-700 mb-1">รายการอุปกรณ์ที่เลือก</label>
-                <select id="equipment" name="equipment" required 
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-                    <!-- Options will be populated by JavaScript -->
-                </select>
-            </div>
-
-            <!-- ชื่อผู้ยืม / ผู้ทำการคืน -->
-            <div>
-                <label for="borrowerName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ยืม / ผู้ทำการคืน</label>
-                <input type="text" id="borrowerName" name="borrowerName" required placeholder="ระบุชื่อ-นามสกุล หรือแผนก"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-            </div>
-            
-            <!-- หน่วยงาน / แผนก -->
-            <div id="departmentGroup">
-                <label for="department" class="block text-sm font-medium text-gray-700 mb-1">หน่วยงาน / แผนก</label>
-                <input type="text" id="department" name="department" placeholder="เช่น: ฝ่าย IT, แผนกผู้ป่วยนอก" required
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-            </div>
-
-            <!-- เบอร์โทรศัพท์ติดต่อ (อัปเดตการตรวจสอบรูปแบบ) -->
-            <div id="phoneNumberGroup">
-                <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ</label>
-                <input 
-                    type="tel" 
-                    id="phoneNumber" 
-                    name="phoneNumber" 
-                    placeholder="เช่น: 08x-xxxxxxx" 
-                    pattern="[0-9]{10}"
-                    title="Thai phone numbers must be 10 digits long (e.g., 0812345678)"
-                    maxlength="10"
-                    required
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-            </div>
-
-            <!-- กำหนดการคืน (ซ่อนเมื่อเลือก 'คืน') -->
-            <div id="dueDateGroup">
-                <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">กำหนดการคืน</label>
-                <input type="date" id="dueDate" name="dueDate" 
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-            </div>
-            
-            <!-- เหตุผลในการยืม (ซ่อนเมื่อเลือก 'คืน') -->
-            <div id="reasonGroup" class="hidden">
-                <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลในการยืม</label>
-                <textarea id="reason" name="reason" rows="2" placeholder="เช่น: ประชุมนอกสถานที่, อบรม, ใช้แทนเครื่องที่เสีย"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"></textarea>
-            </div>
-
-
-            <!-- ปุ่ม Submit -->
             <button type="submit" id="submitBtn"
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-[1.01]">
-                บันทึกการดำเนินการ
+                class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-bold text-white hospital-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-[1.01] mt-8">
+                <svg id="submitIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span id="submitText">บันทึกการดำเนินการ</span>
             </button>
         </form>
 
-        <!-- ข้อความสถานะ/ข้อผิดพลาด -->
-        <div id="statusMessage" class="mt-4 p-4 rounded-lg text-sm hidden"></div>
+        <div id="statusMessage" class="mt-6 p-4 rounded-lg text-lg font-semibold hidden transition duration-300"></div>
 
-        <!-- Loader -->
-        <div id="loader" class="mt-4 flex justify-center items-center hidden">
+        <div id="loader" class="mt-6 flex justify-center items-center hidden">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
-            <span class="ml-3 text-gray-600" id="loaderText">กำลังดึงสถานะอุปกรณ์...</span>
+            <span class="ml-3 text-lg text-gray-600" id="loaderText">กำลังดึงสถานะอุปกรณ์...</span>
         </div>
 
-        <!-- สถานะอุปกรณ์ Real-time -->
-        <div class="mt-8 pt-6 border-t">
-            <h2 class="text-xl font-semibold text-gray-800 border-l-4 border-blue-500 pl-3 mb-4">สถานะอุปกรณ์ (Real-time จาก Google Sheet)</h2>
-            <p class="text-xs text-gray-500 mb-4">
-                *สถานะด้านล่างนี้ถูกคำนวณจาก Log ล่าสุดใน Google Sheet
+        <div class="mt-10 pt-6 border-t border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-green-600 pl-3 mb-4">🖥️ สถานะอุปกรณ์ปัจจุบัน (Real-time)</h2>
+            <p class="text-sm text-gray-500 mb-4">
+                *อัปเดตสถานะแบบ Real-time จาก Log ล่าสุดใน Google Sheet
             </p>
-            <div id="equipmentList" class="space-y-3">
-                <p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>
+            <div id="equipmentList" class="space-y-4">
+                <p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">กำลังโหลดรายการอุปกรณ์...</p>
             </div>
         </div>
     </div>
@@ -162,6 +177,9 @@
     const loader = document.getElementById('loader');
     const loaderText = document.getElementById('loaderText');
     const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const submitIcon = document.getElementById('submitIcon');
+
 
     // Helper function สำหรับแสดง Loader และจัดการปุ่ม
     function toggleLoader(show, text = 'กำลังบันทึกข้อมูล...') {
@@ -169,16 +187,23 @@
         if (show) {
             loader.classList.remove('hidden');
             submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            submitText.textContent = 'กำลังดำเนินการ...';
+            submitIcon.classList.add('hidden'); // ซ่อนไอคอน Submit
         } else {
             loader.classList.add('hidden');
             submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            // อัปเดตข้อความปุ่มตาม Action ปัจจุบัน
+            submitText.textContent = `บันทึกการดำเนินการ${actionSelect.value === 'ยืม' ? ' (ยืม)' : ' (คืน)'}`;
+            submitIcon.classList.remove('hidden'); 
         }
     }
 
     // Helper function สำหรับแสดงสถานะข้อความ
     function showMessage(message, isSuccess = true) {
         statusMessage.textContent = message;
-        statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+        statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'bg-yellow-100', 'text-yellow-700');
         statusMessage.classList.add(isSuccess ? 'bg-green-100' : 'bg-red-100', isSuccess ? 'text-green-700' : 'text-red-700');
         setTimeout(() => {
             statusMessage.classList.add('hidden');
@@ -190,7 +215,9 @@
         const selectedAction = actionSelect.value;
         const isBorrowAction = selectedAction === 'ยืม';
         
-        equipmentSelect.innerHTML = '<option value="" disabled selected>--- เลือกอุปกรณ์ ---</option>';
+        equipmentSelect.innerHTML = '<option value="" disabled selected>--- เลือกอุปกรณ์ที่สามารถทำรายการได้ ---</option>';
+        submitText.textContent = `บันทึกการดำเนินการ${isBorrowAction ? ' (ยืม)' : ' (คืน)'}`;
+
 
         let optionsAdded = 0;
 
@@ -207,22 +234,22 @@
                 // ยืม: แสดงเฉพาะอุปกรณ์ที่พร้อมใช้งาน
                 if (isAvailable) {
                     shouldAdd = true;
-                    displayStatus = `${item.details} (พร้อมให้ยืม)`;
+                    displayStatus = `✅ พร้อมให้ยืม | ${item.details}`;
                 }
             } else {
                 // คืน: แสดงเฉพาะอุปกรณ์ที่ถูกยืมอยู่
                 if (!isAvailable) {
                     shouldAdd = true;
                     const borrower = statusInfo.borrowerName || 'ไม่ระบุ';
-                    const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
-                    displayStatus = `${item.details} (กำลังยืมโดย: ${borrower}, คืน: ${dueDate})`;
+                    const dueDate = statusInfo.dueDate ? new Date(statusInfo.dueDate).toLocaleDateString('th-TH') : 'ไม่ระบุ';
+                    displayStatus = `⚠️ ถูกยืมโดย: ${borrower} (กำหนดคืน: ${dueDate})`;
                 }
             }
 
             if (shouldAdd) {
                 const option = document.createElement('option');
                 option.value = equipmentName;
-                option.textContent = `${equipmentName} ${displayStatus}`;
+                option.textContent = `${equipmentName} - ${displayStatus}`;
                 equipmentSelect.appendChild(option);
                 optionsAdded++;
             }
@@ -231,10 +258,15 @@
         // เพิ่มตัวเลือกแจ้งเตือนหากไม่มีอุปกรณ์ให้เลือกตาม Action
         if (optionsAdded === 0) {
             const msg = document.createElement('option');
-            msg.value = "";
+            msg.value = "N/A";
             msg.disabled = true;
-            msg.textContent = isBorrowAction ? '*** ไม่มีอุปกรณ์พร้อมให้ยืมในขณะนี้ ***' : '*** ไม่มีอุปกรณ์ที่ถูกยืมอยู่ ***';
+            msg.textContent = isBorrowAction ? '❌ ไม่มีอุปกรณ์พร้อมให้ยืมในขณะนี้' : '✅ ไม่มีอุปกรณ์ที่ถูกยืมอยู่ (Log สะอาด)';
             equipmentSelect.appendChild(msg);
+            submitBtn.disabled = true; // ปิดปุ่ม Submit ถ้าไม่มีรายการให้ทำ
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
     }
 
@@ -257,39 +289,53 @@
     // 3. แสดงรายการอุปกรณ์พร้อมสถานะ Real-time
     function renderEquipmentList() {
         equipmentListDiv.innerHTML = ''; 
+        let allAvailable = true;
 
         equipmentInventory.forEach(item => {
             const statusInfo = currentEquipmentStatus[item.name];
             let statusText = '';
-            let statusColor = '';
+            let statusClass = '';
+            let detailText = item.details;
 
             if (statusInfo && statusInfo.action === 'ยืม') {
                 // ถูกยืม
+                allAvailable = false;
                 const borrower = statusInfo.borrowerName || 'ไม่ระบุชื่อ';
-                const dueDate = statusInfo.dueDate || 'ไม่ระบุ';
-                statusText = `⛔ ถูกยืม โดย: ${borrower} (กำหนดคืน: ${dueDate})`;
-                statusColor = 'bg-red-100 text-red-700 border-red-300';
+                const dueDate = statusInfo.dueDate ? new Date(statusInfo.dueDate).toLocaleDateString('th-TH') : 'ไม่ระบุ';
+                statusText = `⛔ ถูกยืมโดย: ${borrower} (กำหนดคืน: ${dueDate})`;
+                statusClass = 'bg-red-50 text-red-700 border-red-300 shadow-lg';
             } else {
                 // พร้อมใช้งาน
                 statusText = '✅ พร้อมใช้งาน';
-                statusColor = 'bg-green-100 text-green-700 border-green-300';
+                statusClass = 'bg-green-50 text-green-700 border-green-300';
             }
+            
+            // Format details to be less prominent
+            const formattedDetails = `<span class="text-xs text-gray-500 mt-1 md:mt-0 md:ml-4 flex-grow truncate">${detailText}</span>`;
+
 
             const itemDiv = document.createElement('div');
-            itemDiv.className = `p-3 rounded-lg border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out ${statusColor}`;
+            itemDiv.className = `p-4 rounded-xl border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out hover:shadow-xl ${statusClass}`;
             itemDiv.innerHTML = `
-                <span class="font-medium text-gray-800">${item.name}</span>
-                <span class="text-xs text-gray-500 mt-1 md:mt-0 md:ml-4 flex-grow">${item.details}</span>
+                <span class="font-bold text-gray-800">${item.name}</span>
+                ${formattedDetails}
                 <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
             `;
             equipmentListDiv.appendChild(itemDiv);
         });
+
+        if (allAvailable && equipmentInventory.length > 0) {
+             const allAvailableMsg = document.createElement('div');
+             allAvailableMsg.className = 'p-4 text-center bg-blue-100 text-blue-700 rounded-lg font-semibold';
+             allAvailableMsg.textContent = '🥳 อุปกรณ์ทั้งหมดพร้อมให้ยืม!';
+             equipmentListDiv.insertBefore(allAvailableMsg, equipmentListDiv.firstChild);
+        }
     }
 
     // 4. ดึง Log ทั้งหมดจาก Apps Script (GET request)
     async function fetchRealtimeStatus() {
         toggleLoader(true, 'กำลังดึงสถานะอุปกรณ์...');
-        equipmentListDiv.innerHTML = '<p class="text-center text-gray-500">กำลังโหลดรายการอุปกรณ์...</p>';
+        equipmentListDiv.innerHTML = '<p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">กำลังโหลดรายการอุปกรณ์...</p>';
 
         try {
             // ใช้ exponential backoff สำหรับการเรียก API
@@ -301,13 +347,11 @@
                     response = await fetch(APPS_SCRIPT_URL, {
                         method: 'GET',
                         redirect: 'follow', 
-                        // เพิ่มพารามิเตอร์เพื่อให้ DoGet ทำงานแม้ไม่มี body
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' } 
                     });
 
                     if (response.ok) break; // สำเร็จ
                     
-                    // หากไม่สำเร็จ ให้รอแล้วลองใหม่
                     if (i < maxRetries - 1) {
                         const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
                         await new Promise(resolve => setTimeout(resolve, delay));
@@ -332,12 +376,12 @@
                 updateEquipmentSelectOptions(); 
             } else {
                 showMessage(`❌ เกิดข้อผิดพลาดในการดึงสถานะ: ${result.message || 'ไม่ทราบข้อผิดพลาด'}`, false);
-                equipmentListDiv.innerHTML = `<p class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดสถานะ: ${result.message || 'กรุณาตรวจสอบ Console'}</p>`;
+                equipmentListDiv.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-100 rounded-lg">เกิดข้อผิดพลาดในการโหลดสถานะ: ${result.message || 'กรุณาตรวจสอบ Console'}</p>`;
             }
         } catch (error) {
             console.error("Fetch GET Error:", error);
             showMessage(`❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Apps Script: ${error.message}`, false);
-            equipmentListDiv.innerHTML = `<p class="text-center text-red-500">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
+            equipmentListDiv.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-100 rounded-lg">ไม่สามารถเชื่อมต่อกับ Web App URL ได้ กรุณาตรวจสอบ Console และ URL</p>`;
         } finally {
             toggleLoader(false);
         }
@@ -383,19 +427,17 @@
 
 
         // 2. ตรวจสอบข้อมูลพื้นฐาน
-        if (equipmentSelect.value === "" || equipmentSelect.value.startsWith('***')) {
-             showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
-             return;
+        if (equipmentSelect.value === "" || equipmentSelect.value === "N/A" || equipmentSelect.value.startsWith('***')) {
+              showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
+              return;
         }
-        // เนื่องจากมีการใช้ HTML5 validation (pattern) แล้ว เราสามารถลดการตรวจสอบเบอร์โทรศัพท์ที่นี่ได้
         if (borrowerName.trim() === "" || department.trim() === "") {
-             showMessage("❗ กรุณาระบุ ชื่อ และ หน่วยงาน/แผนก ให้ครบถ้วน", false);
-             return;
+              showMessage("❗ กรุณาระบุ ชื่อ และ หน่วยงาน/แผนก ให้ครบถ้วน", false);
+              return;
         }
-
         if (action === 'ยืม' && (dueDate.trim() === "" || reason.trim() === "")) {
-             showMessage("❗ กรุณาระบุวันกำหนดคืน และ เหตุผลในการยืม ให้ครบถ้วน", false);
-             return;
+              showMessage("❗ กรุณาระบุวันกำหนดคืน และ เหตุผลในการยืม ให้ครบถ้วน", false);
+              return;
         }
         
         // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด
@@ -414,7 +456,7 @@
 
 
         // 4. ดำเนินการ POST
-        toggleLoader(true, 'กำลังบันทึกข้อมูล...');
+        toggleLoader(true, `กำลังบันทึกข้อมูลการ${action}...`);
         
         // สร้าง URLSearchParams เพื่อรวมพารามิเตอร์ทั้งหมดสำหรับ POST
         const params = new URLSearchParams();
@@ -460,8 +502,10 @@
             const result = await response.json();
             
             if (result.status === 'success') {
-                showMessage(`✅ บันทึกการ${action}สำเร็จ! ข้อมูลถูกบันทึกใน Google Sheet แล้ว`, true);
+                showMessage(`✅ บันทึกการ${action}สำเร็จ! อุปกรณ์: ${equipment} ถูกอัปเดตสถานะแล้ว`, true);
                 form.reset(); 
+                // ตั้งค่า Action เป็นค่าเริ่มต้น (ยืม)
+                actionSelect.value = 'ยืม';
                 actionSelect.dispatchEvent(new Event('change')); 
                 
                 // ดึงสถานะใหม่ทันทีหลังจากบันทึกสำเร็จ
