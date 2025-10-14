@@ -112,7 +112,9 @@
                     </div>
 
                 </div>
-            </div> <div id="reasonGroup">
+            </div> 
+            
+            <div id="reasonGroup">
                 <label for="reason" class="block text-base font-medium text-gray-700 mb-1">เหตุผลในการยืม <span class="text-red-500">*</span></label>
                 <textarea id="reason" name="reason" rows="3" placeholder="โปรดระบุเหตุผลในการยืมอย่างละเอียด เช่น: ประชุมนอกสถานที่, อบรม, ใช้แทนเครื่องที่เสียชั่วคราว" required
                     class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-lg"></textarea>
@@ -137,7 +139,7 @@
         <div class="mt-10 pt-6 border-t border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-green-600 pl-3 mb-4">🖥️ สถานะอุปกรณ์ปัจจุบัน (Real-time)</h2>
             <p class="text-sm text-gray-500 mb-4">
-                *อัปเดตสถานะแบบ Real-time จาก Log ล่าสุดใน Google Sheet
+                *อัปเดตสถานะแบบ Real-time จาก Log ล่าสุดที่บันทึก
             </p>
             <div id="equipmentList" class="space-y-4">
                 <p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">กำลังโหลดรายการอุปกรณ์...</p>
@@ -279,6 +281,9 @@
             statusMap[log.equipment] = {
                 action: log.action,
                 borrowerName: log.borrowerName,
+                department: log.department, // เก็บข้อมูลเพิ่มเติมสำหรับแสดงผล
+                phoneNumber: log.phoneNumber, // เก็บข้อมูลเพิ่มเติมสำหรับแสดงผล
+                reason: log.reason, // เก็บข้อมูลเพิ่มเติมสำหรับแสดงผล
                 dueDate: log.dueDate
             };
         });
@@ -297,13 +302,25 @@
             let statusClass = '';
             let detailText = item.details;
 
+            let extraInfo = '';
+
             if (statusInfo && statusInfo.action === 'ยืม') {
                 // ถูกยืม
                 allAvailable = false;
                 const borrower = statusInfo.borrowerName || 'ไม่ระบุชื่อ';
+                const dept = statusInfo.department || 'ไม่ระบุแผนก';
+                const phone = statusInfo.phoneNumber || 'ไม่มีเบอร์โทร';
+                const reason = statusInfo.reason || 'ไม่ระบุเหตุผล';
                 const dueDate = statusInfo.dueDate ? new Date(statusInfo.dueDate).toLocaleDateString('th-TH') : 'ไม่ระบุ';
-                statusText = `⛔ ถูกยืมโดย: ${borrower} (กำหนดคืน: ${dueDate})`;
+                statusText = `⛔ ถูกยืม (คืน ${dueDate})`;
                 statusClass = 'bg-red-50 text-red-700 border-red-300 shadow-lg';
+                extraInfo = `
+                    <div class="mt-2 text-xs md:text-sm text-red-600 bg-red-100 p-2 rounded-lg space-y-1">
+                        <p><strong class="font-bold">ผู้ยืม:</strong> ${borrower} (${dept})</p>
+                        <p><strong class="font-bold">ติดต่อ:</strong> ${phone}</p>
+                        <p><strong class="font-bold">เหตุผล:</strong> ${reason}</p>
+                    </div>
+                `;
             } else {
                 // พร้อมใช้งาน
                 statusText = '✅ พร้อมใช้งาน';
@@ -315,11 +332,14 @@
 
 
             const itemDiv = document.createElement('div');
-            itemDiv.className = `p-4 rounded-xl border flex flex-col md:flex-row md:justify-between transition duration-150 ease-in-out hover:shadow-xl ${statusClass}`;
+            itemDiv.className = `p-4 rounded-xl border flex flex-col transition duration-150 ease-in-out hover:shadow-xl ${statusClass}`;
             itemDiv.innerHTML = `
-                <span class="font-bold text-gray-800">${item.name}</span>
-                ${formattedDetails}
-                <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+                    <span class="font-bold text-gray-800">${item.name}</span>
+                    ${formattedDetails}
+                    <span class="text-sm font-semibold mt-2 md:mt-0 md:ml-auto whitespace-nowrap">${statusText}</span>
+                </div>
+                ${extraInfo}
             `;
             equipmentListDiv.appendChild(itemDiv);
         });
@@ -329,6 +349,8 @@
              allAvailableMsg.className = 'p-4 text-center bg-blue-100 text-blue-700 rounded-lg font-semibold';
              allAvailableMsg.textContent = '🥳 อุปกรณ์ทั้งหมดพร้อมให้ยืม!';
              equipmentListDiv.insertBefore(allAvailableMsg, equipmentListDiv.firstChild);
+        } else if (equipmentInventory.length === 0) {
+             equipmentListDiv.innerHTML = `<p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">ไม่มีรายการอุปกรณ์ในคลัง</p>`;
         }
     }
 
@@ -422,25 +444,26 @@
         const borrowerName = document.getElementById('borrowerName').value;
         const department = departmentInput.value; 
         const phoneNumber = phoneNumberInput.value; 
-        const reason = (action === 'ยืม') ? reasonTextarea.value : ''; 
+        // ส่งข้อมูลที่จำเป็นเท่านั้น
+        const reason = (action === 'ยืม') ? reasonTextarea.value : 'การคืนอุปกรณ์'; 
         const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
 
 
         // 2. ตรวจสอบข้อมูลพื้นฐาน
-        if (equipmentSelect.value === "" || equipmentSelect.value === "N/A" || equipmentSelect.value.startsWith('***')) {
-              showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
-              return;
+        if (equipmentSelect.value === "" || equipmentSelect.value === "N/A" || equipmentSelect.value.startsWith('---')) {
+             showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
+             return;
         }
         if (borrowerName.trim() === "" || department.trim() === "") {
-              showMessage("❗ กรุณาระบุ ชื่อ และ หน่วยงาน/แผนก ให้ครบถ้วน", false);
-              return;
+             showMessage("❗ กรุณาระบุ ชื่อ และ หน่วยงาน/แผนก ให้ครบถ้วน", false);
+             return;
         }
-        if (action === 'ยืม' && (dueDate.trim() === "" || reason.trim() === "")) {
-              showMessage("❗ กรุณาระบุวันกำหนดคืน และ เหตุผลในการยืม ให้ครบถ้วน", false);
-              return;
+        if (action === 'ยืม' && (dueDate.trim() === "" || reasonTextarea.value.trim() === "")) { // ใช้ reasonTextarea.value เพื่อตรวจสอบการกรอก
+             showMessage("❗ กรุณาระบุวันกำหนดคืน และ เหตุผลในการยืม ให้ครบถ้วน", false);
+             return;
         }
         
-        // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด
+        // 3. ตรวจสอบสถานะการยืมซ้ำ/คืนผิด (Double check against current status)
         const currentStatus = currentEquipmentStatus[equipment];
         const isCurrentlyBorrowed = currentStatus && currentStatus.action === 'ยืม';
 
@@ -465,8 +488,8 @@
         params.append('borrowerName', borrowerName);
         params.append('department', department); 
         params.append('phoneNumber', phoneNumber); 
-        params.append('reason', reason); 
-        params.append('dueDate', dueDate);
+        params.append('reason', reason); // Reason มีค่าเสมอ (ถ้าคืนจะเป็น 'การคืนอุปกรณ์')
+        params.append('dueDate', dueDate); // dueDate มีค่าเมื่อ 'ยืม' เท่านั้น
         
         // ฟังก์ชันสำหรับเรียก API พร้อม Exponential Backoff
         const postDataWithRetry = async () => {
@@ -503,8 +526,15 @@
             
             if (result.status === 'success') {
                 showMessage(`✅ บันทึกการ${action}สำเร็จ! อุปกรณ์: ${equipment} ถูกอัปเดตสถานะแล้ว`, true);
-                form.reset(); 
-                // ตั้งค่า Action เป็นค่าเริ่มต้น (ยืม)
+                
+                // Clear form fields
+                document.getElementById('borrowerName').value = '';
+                departmentInput.value = '';
+                phoneNumberInput.value = '';
+                reasonTextarea.value = '';
+                document.getElementById('dueDate').value = '';
+
+                // Reset Action select and trigger change to reset dropdown/visibility
                 actionSelect.value = 'ยืม';
                 actionSelect.dispatchEvent(new Event('change')); 
                 
