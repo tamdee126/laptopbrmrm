@@ -92,23 +92,22 @@
                     <div id="phoneNumberGroup">
                         <label for="phoneNumber" class="block text-base font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
                         <!-- NAME: phoneNumber (สำหรับ doPost) -->
-                        <textarea
+                        <input 
+                            type="text" 
                             id="phoneNumber" 
                             name="phoneNumber" 
-                            rows="3"
                             placeholder="ตัวอย่าง: 0910786627 (ต้องมี 10 หลัก รวม '0')" 
+                            pattern="[0-9]{10}"
                             title="เบอร์โทรศัพท์ต้องมี 10 หลัก เช่น 0912345678"
                             maxlength="10"
                             required
-                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out"></textarea>
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
                     </div>
                     
                     <div id="dueDateGroup">
                         <label for="dueDate" class="block text-base font-medium text-gray-700 mb-1">📅 กำหนดการคืน <span class="text-red-500">*</span></label>
                         <!-- NAME: dueDate (สำหรับ doPost) -->
-                        <input type="date" id="
-                        
-                        dueDate" name="dueDate" required
+                        <input type="date" id="dueDate" name="dueDate" required
                             class="mt-1 block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 ease-in-out">
                     </div>
 
@@ -154,8 +153,7 @@
     // *** ⚠️ สำคัญมาก: โปรดเปลี่ยน URL นี้เป็น Web App URL ที่คุณได้รับจากการ Deploy Google Apps Script ***
     // *****************************************************************************************************************
     // ใช้ URL ล่าสุดที่คุณให้มาในบริบทการสนทนา
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyI1nbOUJxM9Iqh5KdS795FqXpe1iMz0W8Q24e4VY7juonAm6jSYaC4uJd586MeCtg/exec"; 
-
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwClVjQBa_vnVgurZdS7BWnXBWPb_yGquA0bwJ0TpeN6DXZZqNmR8nBQvOk8iuMcgZ/exec"; 
     // ข้อมูลอุปกรณ์คงที่ (สามารถปรับเปลี่ยนได้ตามความจำเป็น)
     const equipmentInventory = [
         { name: "HP Pavilion Gaming", details: "（รับ 1/9/2020 RMC 16994 No.7440-013-0002/0033）" },
@@ -439,6 +437,12 @@
 
     // 6. จัดการการ Submit Form (POST request)
     form.addEventListener('submit', async (e) => {
+        // ให้เบราว์เซอร์ทำการตรวจสอบ HTML5 Validation (เช่น pattern="[0-9]{10}") โดยอัตโนมัติก่อน
+        if (!form.checkValidity()) {
+            // หากฟอร์มไม่ถูกต้อง จะมีการแสดงข้อความเตือนของเบราว์เซอร์เอง
+            return;
+        }
+
         e.preventDefault();
 
         // 1. ดึงข้อมูล
@@ -446,16 +450,9 @@
         const equipment = equipmentSelect.value;
         const borrowerName = document.getElementById('borrowerName').value;
         const department = departmentInput.value; 
-        const phoneNumber = phoneNumberInput.value.trim(); // Trim whitespace from textarea value
+        const phoneNumber = phoneNumberInput.value.trim(); // ใช้ค่าจาก input type="text"
         
-        // 🚨 ตรวจสอบรูปแบบเบอร์โทรศัพท์ (10 หลัก, ตัวเลขเท่านั้น) 🚨
-        const phonePattern = /^[0-9]{10}$/;
-        if (!phonePattern.test(phoneNumber)) {
-            showMessage("❗ เบอร์โทรศัพท์ต้องมี 10 หลัก และเป็นตัวเลขเท่านั้น (รวม '0')", false);
-            // โฟกัสกลับไปที่ช่องเบอร์โทรศัพท์
-            phoneNumberInput.focus(); 
-            return;
-        }
+        // 🚨 หมายเหตุ: การตรวจสอบ 10 หลักถูกจัดการโดย pattern="[0-9]{10}" ใน HTML แล้ว
 
 
         // ส่งข้อมูลที่จำเป็นเท่านั้น
@@ -463,7 +460,7 @@
         const dueDate = (action === 'ยืม') ? document.getElementById('dueDate').value : '';
 
 
-        // 2. ตรวจสอบข้อมูลพื้นฐาน
+        // 2. ตรวจสอบข้อมูลพื้นฐาน (ส่วนที่ HTML5 Validation ไม่ครอบคลุม)
         if (equipmentSelect.value === "" || equipmentSelect.value === "N/A" || equipmentSelect.value.startsWith('---')) {
              showMessage("❗ กรุณาเลือกรายการอุปกรณ์ที่สามารถทำรายการได้", false);
              return;
@@ -501,7 +498,7 @@
         params.append('equipment', equipment);
         params.append('borrowerName', borrowerName);
         params.append('department', department); 
-        params.append('phoneNumber', phoneNumber); // ใช้ค่าที่ตรวจสอบแล้ว
+        params.append('phoneNumber', phoneNumber); // ใช้ค่าจาก input (ถูกส่งเป็น String)
         params.append('reason', reason); // Reason มีค่าเสมอ (ถ้าคืนจะเป็น 'การคืนอุปกรณ์')
         params.append('dueDate', dueDate); // dueDate มีค่าเมื่อ 'ยืม' เท่านั้น
         
